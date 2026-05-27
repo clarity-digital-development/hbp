@@ -7,6 +7,8 @@ import { BookingCalendar } from "@/components/booking/BookingCalendar";
 import { formatLongDate, toISODate } from "@/lib/availability";
 import { packages, addOns, computeTotals } from "@/lib/pricing";
 
+// Weddings are intentionally excluded — they require a consultation before any
+// deposit, so they route to the contact page rather than the self-serve portal.
 const sessionTypeOptions = [
   "Couple",
   "Portrait",
@@ -14,7 +16,6 @@ const sessionTypeOptions = [
   "Branding",
   "Maternity",
   "Engagement",
-  "Wedding",
   "Other",
 ];
 

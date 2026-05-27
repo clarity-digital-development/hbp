@@ -170,7 +170,7 @@ export default function AboutPage() {
               </h2>
               <p className="text-medium-gray mb-4">
                 You&apos;ll find me exploring local coffee shops, chasing after my dog Delilah,
-                or curled up with a good book.
+                or traveling somewhere new.
               </p>
               <p className="text-medium-gray mb-4">
                 I&apos;m a firm believer that life is meant to be celebrated - from the big milestones

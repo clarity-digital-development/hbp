@@ -41,9 +41,9 @@ const testimonials = [
 
 const galleryCategories = [
   { name: "Couples", image: "/images/service-couples.jpg", href: "/portfolio?category=Couples%20%26%20Engagement" },
-  { name: "Families", image: "/images/service-families.jpg", href: "/portfolio?category=Families" },
-  { name: "Portraits", image: "/images/service-portraits.jpg", href: "/portfolio?category=Portraits", position: "object-[center_25%]" },
-  { name: "Weddings", image: "/images/service-weddings.jpg", href: "/portfolio?category=Weddings" },
+  { name: "Branding", image: "/images/service-branding.jpg", href: "/portfolio?category=Branding" },
+  { name: "Portraits", image: "/images/service-portraits.jpg", href: "/portfolio?category=Portraits" },
+  { name: "Weddings", image: "/images/service-weddings.jpg", href: "/contact?service=Wedding" },
 ];
 
 export default function Home() {
@@ -225,7 +225,7 @@ export default function Home() {
                       src={category.image}
                       alt={category.name}
                       fill
-                      className={`object-cover transition-transform duration-500 group-hover:scale-105 ${category.position || ""}`}
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                       sizes="(max-width: 1024px) 100vw, 25vw"
                     />
                   </div>

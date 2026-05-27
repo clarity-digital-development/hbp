@@ -4,27 +4,35 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
-const stockImages = [
-  "/images/couple.jpg",
-  "/images/portrait-flowers.jpg",
-  "/images/portrait-casual.jpg",
-];
-
-const categories = ["All", "Weddings", "Couples & Engagement", "Portraits", "Families"];
+const categories = ["All", "Weddings", "Couples & Engagement", "Portraits", "Branding"];
 
 const portfolioItems = [
-  { id: 1, category: "Weddings", title: "Sarah & James" },
-  { id: 2, category: "Portraits", title: "Emma's Senior Session" },
-  { id: 3, category: "Families", title: "The Johnson Family" },
-  { id: 4, category: "Couples & Engagement", title: "Sunset Romance" },
-  { id: 5, category: "Couples & Engagement", title: "Downtown Love Story" },
-  { id: 6, category: "Weddings", title: "Maria & David" },
-  { id: 7, category: "Portraits", title: "Creative Headshots" },
-  { id: 8, category: "Families", title: "Fall Family Photos" },
-  { id: 9, category: "Weddings", title: "Garden Ceremony" },
-  { id: 10, category: "Couples & Engagement", title: "Lakeside Engagement" },
-  { id: 11, category: "Families", title: "Holiday Mini Session" },
-  { id: 12, category: "Portraits", title: "Natural Light Studio" },
+  { id: 1, category: "Branding", image: "/images/branding-1.jpg" },
+  { id: 2, category: "Couples & Engagement", image: "/images/couple-1.jpg" },
+  { id: 3, category: "Portraits", image: "/images/portrait-1.jpg" },
+  { id: 4, category: "Weddings", image: "/images/service-weddings.jpg" },
+  { id: 5, category: "Branding", image: "/images/branding-2.jpg" },
+  { id: 6, category: "Portraits", image: "/images/portrait-2.jpg" },
+  { id: 7, category: "Couples & Engagement", image: "/images/couple-2.jpg" },
+  { id: 8, category: "Branding", image: "/images/branding-3.jpg" },
+  { id: 9, category: "Portraits", image: "/images/portrait-3.jpg" },
+  { id: 10, category: "Couples & Engagement", image: "/images/couple-3.jpg" },
+  { id: 11, category: "Portraits", image: "/images/portrait-4.jpg" },
+  { id: 12, category: "Branding", image: "/images/branding-4.jpg" },
+  { id: 13, category: "Couples & Engagement", image: "/images/couple-4.jpg" },
+  { id: 14, category: "Portraits", image: "/images/portrait-5.jpg" },
+  { id: 15, category: "Weddings", image: "/images/wedding-1.jpg" },
+  { id: 16, category: "Branding", image: "/images/branding-5.jpg" },
+  { id: 17, category: "Couples & Engagement", image: "/images/couple-5.jpg" },
+  { id: 18, category: "Portraits", image: "/images/portrait-6.jpg" },
+  { id: 19, category: "Couples & Engagement", image: "/images/couple-6.jpg" },
+  { id: 20, category: "Portraits", image: "/images/portrait-7.jpg" },
+  { id: 21, category: "Couples & Engagement", image: "/images/couple-7.jpg" },
+  { id: 22, category: "Portraits", image: "/images/portrait-8.jpg" },
+  { id: 23, category: "Portraits", image: "/images/portrait-9.jpg" },
+  { id: 24, category: "Portraits", image: "/images/portrait-10.jpg" },
+  { id: 25, category: "Portraits", image: "/images/portrait-11.jpg" },
+  { id: 26, category: "Portraits", image: "/images/portrait-12.jpg" },
 ];
 
 export default function PortfolioPage() {
@@ -110,19 +118,17 @@ export default function PortfolioPage() {
                 >
                   {/* Portfolio Image */}
                   <Image
-                    src={stockImages[item.id % stockImages.length]}
-                    alt={item.title}
+                    src={item.image}
+                    alt={item.category}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
 
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/60 transition-all duration-300 flex items-end">
+                  <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/50 transition-all duration-300 flex items-end">
                     <div className="p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                      <p className="text-dusty-rose text-sm uppercase tracking-wider mb-1">
-                        {item.category}
-                      </p>
-                      <h3 className="font-display text-xl text-white">{item.title}</h3>
+                      <h3 className="font-display text-xl text-white">{item.category}</h3>
                     </div>
                   </div>
                 </motion.div>
