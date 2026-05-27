@@ -1,27 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Jost:wght@300;400;500;600&family=Pinyon+Script&family=Playfair+Display:ital@1&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Primary Neutrals */
+  --color-black: #0A0A0A;
+  --color-charcoal: #2B2A26;
+  --color-dark-gray: #3D3A33;
+  --color-medium-gray: #7A746A;
+  --color-light-gray: #F2EFE8;
+  --color-off-white: #F8F4ED;
+  --color-white: #FFFFFF;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Warm Neutrals (Tan & Brown Spectrum) */
+  --color-cream: #F4EFE5;
+  --color-beige: #E9E1D2;
+  --color-warm-beige: #D9CDB6;
+  --color-taupe: #B8A98F;
+
+  /* Accent Colors (Sage Green) */
+  --color-blush-light: #ECEFE2;
+  --color-blush: #D6DEC5;
+  --color-dusty-rose: #A4B28B;
+  --color-mauve: #7A8961;
+
+  /* Brand Accents */
+  --color-wood-brown: #6B4A2B;
+  --color-tan: #C9A87C;
+  --color-sage: #8FA174;
+  --color-sage-dark: #6E7F58;
+  --color-sage-deep: #4F6240;
+
+  /* Functional Colors */
+  --color-success: #4A7C59;
+  --color-warning: #C4A35A;
+  --color-error: #B85450;
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Jost', 'Helvetica Neue', sans-serif;
+  --font-accent: 'Playfair Display', Georgia, serif;
+  --font-script: 'Pinyon Script', cursive;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--color-charcoal);
+  background: var(--color-off-white);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 400;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .font-accent {
+    font-family: var(--font-accent);
+  }
+
+  .font-script {
+    font-family: var(--font-script);
+    font-weight: 400;
+    font-style: normal;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-charcoal text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-dark-gray transition-colors duration-300;
+  }
+
+  .btn-secondary {
+    @apply border border-charcoal text-charcoal px-8 py-3 text-sm tracking-wider uppercase hover:bg-charcoal hover:text-white transition-colors duration-300;
+  }
+
+  .btn-primary-light {
+    @apply bg-white text-charcoal px-8 py-3 text-sm tracking-wider uppercase hover:bg-cream transition-colors duration-300;
+  }
+
+  .btn-secondary-light {
+    @apply border border-white text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-white hover:text-charcoal transition-colors duration-300;
+  }
+
+  .btn-sage-dark {
+    @apply bg-sage-dark text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-sage-deep transition-colors duration-300;
+  }
+
+  .btn-sage {
+    @apply bg-sage text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-sage-dark transition-colors duration-300;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 }
