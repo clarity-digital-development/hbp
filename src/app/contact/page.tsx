@@ -373,7 +373,7 @@ export default function ContactPage() {
                     </svg>
                   </a>
                   <a
-                    href="https://www.facebook.com/search/top?q=hailey%20brooke%20photography"
+                    href="https://www.facebook.com/profile.php?id=61566405617589"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Facebook"

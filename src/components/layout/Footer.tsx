@@ -68,7 +68,7 @@ export function Footer() {
                   <Instagram size={20} />
                 </a>
                 <a
-                  href="https://facebook.com/HaileyBrookePhotography"
+                  href="https://www.facebook.com/profile.php?id=61566405617589"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
