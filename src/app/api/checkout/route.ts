@@ -51,6 +51,8 @@ export async function POST(req: NextRequest) {
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      // Create a Customer so we can send a balance invoice later.
+      customer_creation: "always",
       // Omit payment_method_types entirely → dynamic payment methods
       // (cards, Apple Pay, Google Pay, etc., configured from the Dashboard).
       line_items: [

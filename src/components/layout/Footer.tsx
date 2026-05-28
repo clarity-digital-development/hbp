@@ -84,12 +84,15 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-dark-gray flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-medium-gray">
           <p>&copy; {new Date().getFullYear()} Hailey Brooke Photography. All rights reserved.</p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center">
             <Link href="/privacy" className="hover:text-white transition-colors">
               Privacy Policy
             </Link>
             <Link href="/terms" className="hover:text-white transition-colors">
-              Terms of Service
+              Terms &amp; Conditions
+            </Link>
+            <Link href="/accessibility" className="hover:text-white transition-colors">
+              Accessibility
             </Link>
           </div>
         </div>
