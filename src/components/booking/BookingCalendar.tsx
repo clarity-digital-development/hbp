@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   getSlotsForDate,
@@ -8,7 +8,6 @@ import {
   isSameDay,
   startOfToday,
   toISODate,
-  fromISODate,
   formatLongDate,
 } from "@/lib/availability";
 
@@ -31,15 +30,10 @@ export function BookingCalendar({
   onSelectDate,
   onSelectTime,
 }: BookingCalendarProps) {
-  const [isIOS, setIsIOS] = useState(false);
   const [viewMonth, setViewMonth] = useState(() => {
     const d = startOfToday();
     return new Date(d.getFullYear(), d.getMonth(), 1);
   });
-
-  useEffect(() => {
-    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
-  }, []);
 
   const slots = selectedDate ? getSlotsForDate(selectedDate) : [];
 
@@ -48,7 +42,6 @@ export function BookingCalendar({
     onSelectTime(""); // reset time when the date changes
   };
 
-  // ----- Month grid (web) -----
   const today = startOfToday();
   const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   const canGoPrev = viewMonth > currentMonthStart;
@@ -67,110 +60,92 @@ export function BookingCalendar({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 md:p-8">
-      {isIOS ? (
-        /* iOS — native date picker */
-        <div>
-          <label className="block text-sm tracking-wider uppercase text-medium-gray mb-3">
-            Select a date
-          </label>
-          <input
-            type="date"
-            min={toISODate(today)}
-            value={selectedDate ? toISODate(selectedDate) : ""}
-            onChange={(e) => {
-              if (e.target.value) handleDateChange(fromISODate(e.target.value));
-            }}
-            className="w-full border border-beige rounded-md px-4 py-3 text-charcoal bg-off-white focus:outline-none focus:ring-2 focus:ring-dusty-rose"
-          />
-        </div>
-      ) : (
-        /* Web — styled month grid */
-        <div>
-          <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 md:p-8">
+      {/* Month grid — used on every device (iOS native picker can't grey
+          out unavailable days, which led to confusing 'no availability'
+          messages on dates that look pickable). */}
+      <div className="flex items-center justify-between mb-6">
+        <button
+          type="button"
+          onClick={() =>
+            canGoPrev &&
+            setViewMonth(
+              new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1)
+            )
+          }
+          disabled={!canGoPrev}
+          aria-label="Previous month"
+          className="h-9 w-9 rounded-full border border-charcoal/20 flex items-center justify-center text-charcoal hover:bg-charcoal hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-charcoal"
+        >
+          <ChevronLeft size={18} />
+        </button>
+        <p className="font-display text-lg sm:text-xl text-charcoal">
+          {MONTHS[viewMonth.getMonth()]} {viewMonth.getFullYear()}
+        </p>
+        <button
+          type="button"
+          onClick={() =>
+            setViewMonth(
+              new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1)
+            )
+          }
+          aria-label="Next month"
+          className="h-9 w-9 rounded-full border border-charcoal/20 flex items-center justify-center text-charcoal hover:bg-charcoal hover:text-white transition-colors"
+        >
+          <ChevronRight size={18} />
+        </button>
+      </div>
+
+      <div className="grid grid-cols-7 gap-1 mb-2">
+        {WEEKDAYS.map((d) => (
+          <div
+            key={d}
+            className="text-center text-[10px] sm:text-xs uppercase tracking-wider text-medium-gray py-2"
+          >
+            {d}
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-7 gap-1">
+        {cells.map((date, i) => {
+          if (!date) return <div key={`empty-${i}`} />;
+          const available = isDateAvailable(date);
+          const isSelected = selectedDate && isSameDay(date, selectedDate);
+          return (
             <button
+              key={toISODate(date)}
               type="button"
-              onClick={() =>
-                canGoPrev &&
-                setViewMonth(
-                  new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1)
-                )
-              }
-              disabled={!canGoPrev}
-              aria-label="Previous month"
-              className="h-9 w-9 rounded-full border border-charcoal/20 flex items-center justify-center text-charcoal hover:bg-charcoal hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-charcoal"
+              disabled={!available}
+              onClick={() => handleDateChange(date)}
+              className={`aspect-square rounded-full flex items-center justify-center text-sm transition-colors ${
+                isSelected
+                  ? "bg-dusty-rose text-white"
+                  : available
+                  ? "text-charcoal hover:bg-blush-light cursor-pointer"
+                  : "text-medium-gray/30 cursor-not-allowed line-through"
+              }`}
             >
-              <ChevronLeft size={18} />
+              {date.getDate()}
             </button>
-            <p className="font-display text-xl text-charcoal">
-              {MONTHS[viewMonth.getMonth()]} {viewMonth.getFullYear()}
-            </p>
-            <button
-              type="button"
-              onClick={() =>
-                setViewMonth(
-                  new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1)
-                )
-              }
-              aria-label="Next month"
-              className="h-9 w-9 rounded-full border border-charcoal/20 flex items-center justify-center text-charcoal hover:bg-charcoal hover:text-white transition-colors"
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
+          );
+        })}
+      </div>
 
-          <div className="grid grid-cols-7 gap-1 mb-2">
-            {WEEKDAYS.map((d) => (
-              <div
-                key={d}
-                className="text-center text-xs uppercase tracking-wider text-medium-gray py-2"
-              >
-                {d}
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-7 gap-1">
-            {cells.map((date, i) => {
-              if (!date) return <div key={`empty-${i}`} />;
-              const available = isDateAvailable(date);
-              const isSelected = selectedDate && isSameDay(date, selectedDate);
-              return (
-                <button
-                  key={toISODate(date)}
-                  type="button"
-                  disabled={!available}
-                  onClick={() => handleDateChange(date)}
-                  className={`aspect-square rounded-full flex items-center justify-center text-sm transition-colors ${
-                    isSelected
-                      ? "bg-dusty-rose text-white"
-                      : available
-                      ? "text-charcoal hover:bg-blush-light cursor-pointer"
-                      : "text-medium-gray/30 cursor-not-allowed line-through"
-                  }`}
-                >
-                  {date.getDate()}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Time slots */}
+      {/* Time slots — appear under the calendar once a date is picked */}
       {selectedDate && (
         <div className="mt-8 border-t border-beige pt-6">
-          <p className="text-sm tracking-wider uppercase text-medium-gray mb-2">
+          <p className="text-xs sm:text-sm font-medium text-charcoal mb-3 break-words">
             {formatLongDate(selectedDate)}
           </p>
           {slots.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {slots.map((slot) => (
                 <button
                   key={slot}
                   type="button"
                   onClick={() => onSelectTime(slot)}
-                  className={`px-4 py-2 rounded-full text-sm border transition-colors ${
+                  className={`px-2 py-2 rounded-full text-xs sm:text-sm border transition-colors text-center whitespace-nowrap ${
                     selectedTime === slot
                       ? "bg-dusty-rose text-white border-dusty-rose"
                       : "border-beige text-charcoal hover:border-dusty-rose"
