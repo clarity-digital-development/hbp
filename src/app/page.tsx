@@ -116,7 +116,7 @@ export default function Home() {
               <Link href="/portfolio" className="btn-sage-dark">
                 View Portfolio
               </Link>
-              <Link href="/contact" className="btn-sage">
+              <Link href="/book" className="btn-sage">
                 Book a Session
               </Link>
             </motion.div>
