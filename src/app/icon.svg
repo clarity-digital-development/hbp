@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="8" fill="#FFFFFF"/>
+  <text
+    x="32"
+    y="42"
+    text-anchor="middle"
+    fill="#2B2A26"
+    font-family="Georgia, 'Cormorant Garamond', 'Times New Roman', serif"
+    font-size="26"
+    font-weight="700"
+    letter-spacing="-0.5"
+  >HBP</text>
+</svg>
