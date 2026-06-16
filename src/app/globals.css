@@ -101,6 +101,10 @@ h1, h2, h3, h4, h5, h6 {
     @apply bg-sage-dark text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-sage-deep transition-colors duration-300;
   }
 
+  .form-input {
+    @apply w-full border border-beige rounded-md px-3 py-2 bg-white text-charcoal text-sm focus:outline-none focus:ring-2 focus:ring-dusty-rose;
+  }
+
   .btn-sage {
     @apply bg-sage text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-sage-dark transition-colors duration-300;
   }

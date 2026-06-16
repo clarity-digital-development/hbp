@@ -12,6 +12,10 @@ model Booking {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
+  // "session" = booked through the self-serve deposit flow.
+  // "invoice" = a one-off custom invoice (e.g. weddings) created from /admin.
+  kind                  String   @default("session")
+
   fullName              String
   email                 String?
   phone                 String

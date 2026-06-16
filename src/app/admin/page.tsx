@@ -4,6 +4,7 @@ import { isAuthed } from "@/lib/admin-auth";
 import { prisma, isDbConfigured } from "@/lib/db";
 import { LogoutButton } from "./AdminControls";
 import { BookingCard } from "./BookingCard";
+import { CustomInvoiceForm } from "./CustomInvoiceForm";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +35,8 @@ export default async function AdminPage() {
           </div>
           <LogoutButton />
         </div>
+
+        {isDbConfigured() && !dbError && <CustomInvoiceForm />}
 
         {!isDbConfigured() ? (
           <Notice title="Database not connected">
