@@ -11,7 +11,7 @@ const LAST_UPDATED = "May 27, 2026";
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="font-display text-2xl text-charcoal mb-3">{title}</h2>
+      <h2 className="font-title text-2xl mb-3">{title}</h2>
       <div className="space-y-3 text-medium-gray leading-relaxed">{children}</div>
     </div>
   );
@@ -22,7 +22,7 @@ export default function TermsPage() {
     <main className="min-h-screen bg-off-white">
       <section className="section-padding bg-cream">
         <div className="container-custom text-center">
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-charcoal mb-4">
+          <h1 className="section-title text-4xl md:text-5xl lg:text-6xl mb-4">
             Terms &amp; Conditions
           </h1>
           <p className="text-medium-gray">Last updated: {LAST_UPDATED}</p>

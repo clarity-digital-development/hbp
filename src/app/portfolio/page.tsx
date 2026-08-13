@@ -147,7 +147,7 @@ export default function PortfolioPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="font-display text-3xl md:text-4xl text-charcoal mb-4">
+            <h2 className="section-title text-3xl md:text-4xl mb-4">
               Ready to Create Your Story?
             </h2>
             <p className="text-medium-gray mb-8 max-w-xl mx-auto">

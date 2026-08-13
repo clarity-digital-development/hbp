@@ -334,7 +334,7 @@ export default function BookPage() {
             </div>
 
             <div className="text-center pt-2">
-              <button onClick={handleContinue} className="btn-sage-dark inline-block">
+              <button onClick={handleContinue} className="btn-olive inline-block">
                 Continue to Payment
               </button>
             </div>
@@ -355,7 +355,7 @@ export default function BookPage() {
 
             {/* Summary */}
             <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
-              <h2 className="font-display text-2xl text-charcoal mb-6">Your booking</h2>
+              <h2 className="section-title text-2xl mb-6">Your booking</h2>
               <dl className="space-y-3 text-sm">
                 <Row label="Session">{resolvedType}</Row>
                 <Row label="Package">
@@ -401,7 +401,7 @@ export default function BookPage() {
               <button
                 onClick={handlePay}
                 disabled={paying}
-                className="btn-sage-dark w-full text-center disabled:opacity-60 disabled:cursor-not-allowed"
+                className="btn-olive w-full text-center disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {paying ? "Redirecting to secure checkout…" : `Pay $${deposit} Deposit & Reserve`}
               </button>

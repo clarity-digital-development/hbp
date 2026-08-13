@@ -5,20 +5,30 @@
 @tailwind utilities;
 
 :root {
-  /* Primary Neutrals */
+  /* Primary Neutrals — de-browned, off-white is the single page ground */
   --color-black: #0A0A0A;
   --color-charcoal: #2B2A26;
   --color-dark-gray: #3D3A33;
-  --color-medium-gray: #7A746A;
-  --color-light-gray: #F2EFE8;
-  --color-off-white: #F8F4ED;
+  --color-medium-gray: #6F6C63;
+  --color-light-gray: #F7F4ED;
+  --color-off-white: #FFFCF5;
   --color-white: #FFFFFF;
 
-  /* Warm Neutrals (Tan & Brown Spectrum) */
-  --color-cream: #F4EFE5;
-  --color-beige: #E9E1D2;
-  --color-warm-beige: #D9CDB6;
-  --color-taupe: #B8A98F;
+  /* Neutral supports — hairlines and subtle panel fills only.
+     Deliberately near-neutral: the brown/tan spectrum was removed.
+     Kept a step below the page ground so sections stay near-flat. */
+  --color-cream: #FBF8F1;
+  --color-beige: #E9E6DC;
+  --color-mist: #F5F2EB;
+
+  /* Brand — olive (header, final CTA) */
+  --color-olive: #757A3B;
+  --color-olive-dark: #5E6230;
+  --color-olive-tint: #EDEFE3;
+
+  /* Gold — fine accent, photo borders and rules */
+  --color-gold: #C2A45C;
+  --color-gold-dark: #A5883F;
 
   /* Accent Colors (Sage Green) */
   --color-blush-light: #ECEFE2;
@@ -27,8 +37,6 @@
   --color-mauve: #7A8961;
 
   /* Brand Accents */
-  --color-wood-brown: #6B4A2B;
-  --color-tan: #C9A87C;
   --color-sage: #8FA174;
   --color-sage-dark: #6E7F58;
   --color-sage-deep: #4F6240;
@@ -43,6 +51,7 @@
   --font-body: 'Jost', 'Helvetica Neue', sans-serif;
   --font-accent: 'Playfair Display', Georgia, serif;
   --font-script: 'Pinyon Script', cursive;
+  /* --font-title is injected by next/font in layout.tsx (Instrument Serif) */
 }
 
 body {
@@ -78,6 +87,10 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 400;
     font-style: normal;
   }
+
+  .font-title {
+    font-family: var(--font-title), Georgia, serif;
+  }
 }
 
 @layer components {
@@ -107,6 +120,30 @@ h1, h2, h3, h4, h5, h6 {
 
   .btn-sage {
     @apply bg-sage text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-sage-dark transition-colors duration-300;
+  }
+
+  .btn-olive {
+    @apply bg-olive text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-olive-dark transition-colors duration-300;
+  }
+
+  .btn-olive-outline {
+    @apply border border-olive text-olive px-8 py-3 text-sm tracking-wider uppercase hover:bg-olive hover:text-white transition-colors duration-300;
+  }
+
+  /* All-caps Instrument Serif — section headings and nav, per brand direction */
+  .section-title {
+    @apply font-title uppercase text-charcoal leading-[1.05];
+    letter-spacing: 0.04em;
+  }
+
+  .nav-title {
+    @apply font-title uppercase leading-none;
+    letter-spacing: 0.06em;
+  }
+
+  /* Thin gold rule used under headings and around framed photos */
+  .rule-gold {
+    @apply block h-px w-16 bg-gold;
   }
 
   .section-padding {

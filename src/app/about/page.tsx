@@ -32,7 +32,7 @@ export default function AboutPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="order-1 lg:order-2"
             >
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-charcoal mb-2">
+              <h1 className="section-title text-4xl md:text-5xl lg:text-6xl mb-2">
                 Hey, I&apos;m Hailey!
               </h1>
               <p className="font-accent text-dusty-rose text-xl mb-6">
@@ -74,7 +74,7 @@ export default function AboutPage() {
               transition={{ duration: 0.6 }}
               className="text-center mb-12"
             >
-              <h2 className="font-display text-3xl md:text-4xl text-charcoal mb-6">
+              <h2 className="section-title text-3xl md:text-4xl mb-6">
                 My Approach
               </h2>
               <p className="text-medium-gray text-lg">
@@ -128,7 +128,7 @@ export default function AboutPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="font-display text-3xl md:text-4xl text-charcoal mb-4">
+            <h2 className="section-title text-3xl md:text-4xl mb-4">
               A Little More About Me
             </h2>
           </motion.div>
@@ -165,7 +165,7 @@ export default function AboutPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="font-display text-3xl md:text-4xl text-charcoal mb-6">
+              <h2 className="section-title text-3xl md:text-4xl mb-6">
                 When I&apos;m Not Behind the Camera
               </h2>
               <p className="text-medium-gray mb-4">
@@ -211,7 +211,7 @@ export default function AboutPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="font-display text-3xl md:text-4xl text-cream mb-4">
+            <h2 className="section-title text-3xl md:text-4xl text-white mb-4">
               Let&apos;s Work Together
             </h2>
             <p className="text-beige mb-8 max-w-xl mx-auto">

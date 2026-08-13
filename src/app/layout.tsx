@@ -1,7 +1,18 @@
 import type { Metadata } from "next";
+import { Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { FooterGate } from "@/components/layout/FooterGate";
+
+// Section headings and navigation, set all-caps. Self-hosted by next/font so it
+// isn't blocked behind the stylesheet @import the other faces still use.
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-title",
+});
 
 export const metadata: Metadata = {
   title: "Hailey Brooke Photography | Kentucky Portrait & Lifestyle Photographer",
@@ -21,13 +32,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={instrumentSerif.variable}>
       <body className="antialiased">
         <Header />
-        <main className="pt-20 lg:pt-24">
+        <main className="pt-16 lg:pt-20">
           {children}
         </main>
-        <Footer />
+        <FooterGate />
       </body>
     </html>
   );

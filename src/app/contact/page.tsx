@@ -101,7 +101,7 @@ export default function ContactPage() {
                       />
                     </svg>
                   </div>
-                  <h2 className="font-display text-2xl text-charcoal mb-4">Thank You!</h2>
+                  <h2 className="section-title text-2xl mb-4">Thank You!</h2>
                   <p className="text-medium-gray mb-6">
                     Your message has been sent successfully. I&apos;ll be in touch soon!
                   </p>
@@ -259,7 +259,7 @@ export default function ContactPage() {
               className="space-y-8"
             >
               <div>
-                <h2 className="font-display text-2xl text-charcoal mb-4">Let&apos;s Connect</h2>
+                <h2 className="section-title text-2xl mb-4">Let&apos;s Connect</h2>
                 <p className="text-medium-gray">
                   Whether you&apos;re planning a wedding, welcoming a new baby, or simply want to
                   capture your family&apos;s story, I&apos;m here to help bring your vision to life.

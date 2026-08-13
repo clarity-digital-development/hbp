@@ -66,7 +66,7 @@ export default function StudioPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="font-display text-3xl md:text-4xl text-charcoal mb-4">
+            <h2 className="section-title text-3xl md:text-4xl mb-4">
               Choose your time
             </h2>
             <p className="text-medium-gray max-w-xl mx-auto">
@@ -131,7 +131,7 @@ export default function StudioPage() {
             </p>
             <Link
               href={`/contact?service=Studio%20Session&duration=${selectedMinutes}&total=${selectedPrice.total}`}
-              className="btn-sage-dark inline-block"
+              className="btn-olive inline-block"
             >
               Book This Session
             </Link>

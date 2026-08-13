@@ -17,19 +17,23 @@ const config: Config = {
         "light-gray": "var(--color-light-gray)",
         "off-white": "var(--color-off-white)",
         white: "var(--color-white)",
-        // Warm Neutrals
+        // Neutral supports
         cream: "var(--color-cream)",
         beige: "var(--color-beige)",
-        "warm-beige": "var(--color-warm-beige)",
-        taupe: "var(--color-taupe)",
+        mist: "var(--color-mist)",
+        // Brand — olive
+        olive: "var(--color-olive)",
+        "olive-dark": "var(--color-olive-dark)",
+        "olive-tint": "var(--color-olive-tint)",
+        // Gold accent
+        gold: "var(--color-gold)",
+        "gold-dark": "var(--color-gold-dark)",
         // Accent Colors
         "blush-light": "var(--color-blush-light)",
         blush: "var(--color-blush)",
         "dusty-rose": "var(--color-dusty-rose)",
         mauve: "var(--color-mauve)",
         // Brand
-        "wood-brown": "var(--color-wood-brown)",
-        tan: "var(--color-tan)",
         sage: "var(--color-sage)",
         "sage-dark": "var(--color-sage-dark)",
         "sage-deep": "var(--color-sage-deep)",
@@ -43,6 +47,7 @@ const config: Config = {
         body: ["var(--font-body)"],
         accent: ["var(--font-accent)"],
         script: ["var(--font-script)"],
+        title: ["var(--font-title)", "Georgia", "serif"],
       },
       fontSize: {
         "hero": ["6rem", { lineHeight: "1.1" }],

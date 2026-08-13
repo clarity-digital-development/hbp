@@ -46,7 +46,7 @@ export default async function ConfirmationPage({
             <div className="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <Check className="w-8 h-8 text-sage-dark" />
             </div>
-            <h1 className="font-display text-3xl md:text-4xl text-charcoal mb-3">
+            <h1 className="section-title text-3xl md:text-4xl mb-3">
               {paid ? "Booking confirmed!" : "Thank you!"}
             </h1>
             <p className="text-medium-gray mb-8 max-w-md mx-auto">
@@ -80,7 +80,7 @@ export default async function ConfirmationPage({
             )}
 
             <div className="mt-8">
-              <Link href="/" className="btn-sage-dark inline-block">
+              <Link href="/" className="btn-olive inline-block">
                 Back to Home
               </Link>
             </div>

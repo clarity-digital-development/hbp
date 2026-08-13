@@ -82,7 +82,7 @@ export default function InvestmentPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="font-display text-3xl md:text-4xl text-charcoal mb-4">
+            <h2 className="section-title text-3xl md:text-4xl mb-4">
               Portrait & Family Sessions
             </h2>
             <p className="text-medium-gray max-w-xl mx-auto">
@@ -118,7 +118,7 @@ export default function InvestmentPage() {
                     </span>
                     <span className="text-4xl font-display text-dusty-rose">{pkg.price}</span>
                   </div>
-                  <p className="text-xs uppercase tracking-wider text-taupe mb-2">{pkg.duration}</p>
+                  <p className="text-xs uppercase tracking-wider text-olive mb-2">{pkg.duration}</p>
                   <p className="text-medium-gray text-sm">{pkg.description}</p>
                 </div>
 
@@ -170,7 +170,7 @@ export default function InvestmentPage() {
               Book a studio session and pick exactly how much time you need. Studio time is added
               on top of standard session pricing.
             </p>
-            <Link href="/studio" className="btn-sage-dark inline-block">
+            <Link href="/studio" className="btn-olive inline-block">
               Want Studio Shots?
             </Link>
           </motion.div>
@@ -187,7 +187,7 @@ export default function InvestmentPage() {
             transition={{ duration: 0.6 }}
             className="max-w-2xl mx-auto bg-white rounded-lg p-8 md:p-12 shadow-sm text-center"
           >
-            <h2 className="font-display text-3xl md:text-4xl text-charcoal mb-4">
+            <h2 className="section-title text-3xl md:text-4xl mb-4">
               Weddings
             </h2>
             <p className="text-medium-gray mb-8">
@@ -211,7 +211,7 @@ export default function InvestmentPage() {
             transition={{ duration: 0.6 }}
             className="max-w-3xl mx-auto text-center"
           >
-            <h2 className="font-display text-3xl text-charcoal mb-6">
+            <h2 className="section-title text-3xl mb-6">
               Custom Packages Available
             </h2>
             <p className="text-medium-gray mb-8">

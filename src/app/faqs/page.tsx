@@ -167,7 +167,7 @@ export default function FAQsPage() {
               transition={{ duration: 0.6, delay: sectionIndex * 0.1 }}
               className="mb-12"
             >
-              <h2 className="font-display text-2xl text-charcoal mb-6">{section.category}</h2>
+              <h2 className="section-title text-2xl mb-6">{section.category}</h2>
               <div className="bg-white rounded-lg shadow-sm p-6">
                 {section.questions.map((item, index) => (
                   <AccordionItem
@@ -193,7 +193,7 @@ export default function FAQsPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="font-display text-3xl md:text-4xl text-charcoal mb-4">
+            <h2 className="section-title text-3xl md:text-4xl mb-4">
               Still Have Questions?
             </h2>
             <p className="text-medium-gray mb-8 max-w-xl mx-auto">
