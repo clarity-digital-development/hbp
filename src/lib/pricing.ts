@@ -5,9 +5,8 @@
 export const DEPOSIT_RATE = 0.3;
 
 export const packages = [
-  { name: "Essential", price: 90, detail: "30 min · 15+ images" },
-  { name: "Signature", price: 150, detail: "60 min · 30+ images" },
-  { name: "Luxe", price: 240, detail: "90 min · 50+ images" },
+  { name: "Mini Session", price: 100, detail: "30 min · all the best photos" },
+  { name: "Full Session", price: 175, detail: "60 min · one outfit change" },
 ] as const;
 
 export const addOns = [

@@ -58,6 +58,7 @@ export default function Home() {
             <div className="p-1.5 sm:p-2 border border-gold">
               <div className="relative aspect-[2/3] w-[min(66vw,17rem)] sm:w-[18rem] lg:w-auto lg:h-[min(70vh,37.5rem)] overflow-hidden">
                 <Image
+                  quality={90}
                   src={heroImage}
                   alt="Hailey Brooke, Kentucky wedding and portrait photographer"
                   fill

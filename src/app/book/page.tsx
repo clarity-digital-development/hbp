@@ -7,17 +7,10 @@ import { BookingCalendar } from "@/components/booking/BookingCalendar";
 import { formatLongDate, toISODate } from "@/lib/availability";
 import { packages, addOns, computeTotals } from "@/lib/pricing";
 
-// Weddings are intentionally excluded — they require a consultation before any
-// deposit, so they route to the contact page rather than the self-serve portal.
-const sessionTypeOptions = [
-  "Couple",
-  "Portrait",
-  "Family",
-  "Branding",
-  "Maternity",
-  "Engagement",
-  "Other",
-];
+// Sessions are self-serve and take a deposit. Weddings are an inquiry only —
+// they need a conversation before any money changes hands, so that path skips
+// packages, prints and checkout entirely.
+const bookingTypeOptions = ["Session", "Wedding"];
 
 export default function BookPage() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -25,8 +18,8 @@ export default function BookPage() {
   // Required + optional fields
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
-  const [sessionType, setSessionType] = useState("");
-  const [otherType, setOtherType] = useState("");
+  const [bookingType, setBookingType] = useState("");
+  const [email, setEmail] = useState("");
   const [social, setSocial] = useState("");
   const [notes, setNotes] = useState("");
   const [packageName, setPackageName] = useState("");
@@ -39,6 +32,11 @@ export default function BookPage() {
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState("");
   const [cancelled, setCancelled] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [sendError, setSendError] = useState("");
+
+  const isWedding = bookingType === "Wedding";
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -53,15 +51,15 @@ export default function BookPage() {
 
   const errors = {
     fullName: !fullName.trim(),
+    email: !email.trim(),
     phone: !phone.trim(),
-    sessionType: !sessionType || (sessionType === "Other" && !otherType.trim()),
-    package: !packageName,
-    schedule: !date || !time,
+    bookingType: !bookingType,
+    // Weddings quote per enquiry, so no package, prints or time slot applies.
+    package: !isWedding && !packageName,
+    schedule: isWedding ? !date : !date || !time,
   };
   const isValid = !Object.values(errors).some(Boolean);
 
-  const resolvedType =
-    sessionType === "Other" ? otherType.trim() || "Other" : sessionType;
 
   const handleContinue = () => {
     if (!isValid) {
@@ -71,6 +69,44 @@ export default function BookPage() {
     }
     setStep(2);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  /** Weddings don't take a deposit — this posts an enquiry instead. */
+  const handleWeddingInquiry = async () => {
+    if (!isValid) {
+      setShowErrors(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    setSending(true);
+    setSendError("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: fullName,
+          email,
+          phone,
+          sessionType: "Wedding",
+          date: date ? toISODate(date) : "",
+          message: [notes, social && `Social: ${social}`]
+            .filter(Boolean)
+            .join("\n\n") || "Wedding enquiry from the booking page.",
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSendError(data.error || "Could not send your enquiry. Please try again.");
+        setSending(false);
+        return;
+      }
+      setSent(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      setSendError("Network error. Please try again.");
+    }
+    setSending(false);
   };
 
   const handlePay = async () => {
@@ -85,8 +121,9 @@ export default function BookPage() {
           quantities,
           fullName,
           phone,
+          email,
           social,
-          sessionType: resolvedType,
+          sessionType: packageName,
           date: date ? toISODate(date) : "",
           time,
           notes,
@@ -121,7 +158,7 @@ export default function BookPage() {
             transition={{ duration: 0.6 }}
             className="font-display text-4xl md:text-5xl lg:text-6xl text-charcoal mb-6"
           >
-            Book Your Session
+            {isWedding ? "Enquire About Your Date" : "Book Your Session"}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -129,13 +166,14 @@ export default function BookPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-medium-gray text-lg max-w-2xl mx-auto"
           >
-            Tell me a little about your session and pick a date that works for you.
-            A 30% deposit reserves your spot.
+            {isWedding
+              ? "Tell me a little about your day and I'll be in touch to talk it through."
+              : "Tell me a little about your session and pick a date that works for you. A 30% deposit reserves your spot."}
           </motion.p>
 
           {/* Step indicator */}
           <div className="flex items-center justify-center gap-3 mt-8 text-sm">
-            {["Details", "Payment"].map((label, i) => {
+            {(isWedding ? ["Details"] : ["Details", "Payment"]).map((label, i) => {
               const n = (i + 1) as 1 | 2;
               const active = step === n;
               const done = step > n;
@@ -167,8 +205,26 @@ export default function BookPage() {
         </div>
       </section>
 
+      {/* Wedding enquiry sent */}
+      {sent && (
+        <section className="section-padding">
+          <div className="container-custom max-w-xl text-center">
+            <h2 className="section-title text-3xl mb-4">Enquiry sent</h2>
+            <span className="rule-gold mx-auto mb-6" />
+            <p className="text-medium-gray">
+              Thank you — I&apos;ve got your date and I&apos;ll be in touch shortly to talk
+              through your day. If it&apos;s urgent, you can reach me directly at{" "}
+              <a href="tel:502-837-0871" className="text-olive hover:underline">
+                502-837-0871
+              </a>
+              .
+            </p>
+          </div>
+        </section>
+      )}
+
       {/* Step 1 — Details */}
-      {step === 1 && (
+      {!sent && step === 1 && (
         <section className="section-padding">
           <div className="container-custom max-w-3xl space-y-10">
             {cancelled && (
@@ -183,28 +239,26 @@ export default function BookPage() {
               </div>
             )}
 
-            {/* Session type */}
-            <Field label="Type of session" required error={showErrors && errors.sessionType}>
+            {/* Booking type */}
+            <Field label="Type of booking" required error={showErrors && errors.bookingType}>
               <StyledSelect
-                value={sessionType}
-                onChange={(v) => setSessionType(v)}
-                placeholder="Select a session type"
-                options={sessionTypeOptions}
+                value={bookingType}
+                onChange={(v) => setBookingType(v)}
+                placeholder="Select a booking type"
+                options={bookingTypeOptions}
               />
-              {sessionType === "Other" && (
-                <input
-                  type="text"
-                  value={otherType}
-                  onChange={(e) => setOtherType(e.target.value)}
-                  placeholder="Tell me what you have in mind"
-                  className="mt-3 w-full border border-beige rounded-md px-4 py-3 bg-white text-charcoal focus:outline-none focus:ring-2 focus:ring-dusty-rose"
-                />
+              {isWedding && (
+                <p className="mt-3 text-sm text-medium-gray">
+                  Weddings are quoted per couple, so this sends me an enquiry rather than
+                  taking a deposit. I&apos;ll be in touch to talk through your day.
+                </p>
               )}
             </Field>
 
-            {/* Package */}
+            {/* Package — sessions only; weddings are quoted per enquiry. */}
+            {!isWedding && (
             <Field label="Session package" required error={showErrors && errors.package}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {packages.map((p) => {
                   const active = packageName === p.name;
                   return (
@@ -226,6 +280,7 @@ export default function BookPage() {
                 })}
               </div>
             </Field>
+            )}
 
             {/* Name + Phone */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -249,6 +304,16 @@ export default function BookPage() {
               </Field>
             </div>
 
+            <Field label="Email address" required error={showErrors && errors.email}>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full border border-beige rounded-md px-4 py-3 bg-white text-charcoal focus:outline-none focus:ring-2 focus:ring-dusty-rose"
+              />
+            </Field>
+
             {/* Social (optional) */}
             <Field label="Social media handle" optional>
               <input
@@ -260,13 +325,18 @@ export default function BookPage() {
               />
             </Field>
 
-            {/* Calendar */}
-            <Field label="Choose a date & time" required error={showErrors && errors.schedule}>
+            {/* Calendar — a wedding takes the whole day, so no start time. */}
+            <Field
+              label={isWedding ? "Your wedding date" : "Choose a date & time"}
+              required
+              error={showErrors && errors.schedule}
+            >
               <BookingCalendar
                 selectedDate={date}
                 selectedTime={time}
                 onSelectDate={setDate}
                 onSelectTime={setTime}
+                hideTimes={isWedding}
               />
             </Field>
 
@@ -281,7 +351,8 @@ export default function BookPage() {
               />
             </Field>
 
-            {/* Optional prints */}
+            {/* Optional prints — sessions only. */}
+            {!isWedding && (
             <div>
               <div className="flex items-baseline justify-between mb-1">
                 <h3 className="font-display text-xl text-charcoal">Add prints</h3>
@@ -332,10 +403,25 @@ export default function BookPage() {
                 })}
               </div>
             </div>
+            )}
+
+            {sendError && (
+              <div className="bg-error/10 border border-error/30 text-error rounded-lg p-4 text-sm">
+                {sendError}
+              </div>
+            )}
 
             <div className="text-center pt-2">
-              <button onClick={handleContinue} className="btn-olive inline-block">
-                Continue to Payment
+              <button
+                onClick={isWedding ? handleWeddingInquiry : handleContinue}
+                disabled={sending}
+                className="btn-olive inline-block disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isWedding
+                  ? sending
+                    ? "Sending…"
+                    : "Send Enquiry"
+                  : "Continue to Payment"}
               </button>
             </div>
           </div>
@@ -357,7 +443,7 @@ export default function BookPage() {
             <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
               <h2 className="section-title text-2xl mb-6">Your booking</h2>
               <dl className="space-y-3 text-sm">
-                <Row label="Session">{resolvedType}</Row>
+                <Row label="Session">{packageName}</Row>
                 <Row label="Package">
                   {selectedPackage?.name} (${selectedPackage?.price})
                 </Row>

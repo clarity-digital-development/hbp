@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Instrument_Serif } from "next/font/google";
+import { Instrument_Serif, Parisienne, EB_Garamond } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { FooterGate } from "@/components/layout/FooterGate";
@@ -12,6 +12,21 @@ const instrumentSerif = Instrument_Serif({
   style: ["normal", "italic"],
   display: "swap",
   variable: "--font-title",
+});
+
+// Pricing pages only. Hailey designed those around a softer, more romantic
+// pairing than the all-caps Instrument Serif the rest of the site uses.
+const parisienne = Parisienne({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-flourish",
+});
+
+const ebGaramond = EB_Garamond({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-reading",
 });
 
 export const metadata: Metadata = {
@@ -32,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={instrumentSerif.variable}>
+    <html lang="en" className={`${instrumentSerif.variable} ${parisienne.variable} ${ebGaramond.variable}`}>
       <body className="antialiased">
         <Header />
         <main className="pt-16 lg:pt-20">

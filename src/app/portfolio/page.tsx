@@ -118,6 +118,7 @@ export default function PortfolioPage() {
                 >
                   {/* Portfolio Image */}
                   <Image
+                    quality={90}
                     src={item.image}
                     alt={item.category}
                     fill

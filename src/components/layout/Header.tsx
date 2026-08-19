@@ -4,23 +4,42 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Facebook, Menu, X } from "lucide-react";
+import { ChevronDown, Instagram, Facebook, Menu, X } from "lucide-react";
 
-const navLinks = [
+type NavItem =
+  | { href: string; label: string }
+  | { label: string; children: { href: string; label: string }[] };
+
+const navLinks: NavItem[] = [
   { href: "/", label: "Homepage" },
   { href: "/about", label: "About" },
   { href: "/portfolio", label: "Portfolio" },
-  { href: "/investment", label: "Pricing" },
-  { href: "/faqs", label: "FAQs" },
-  { href: "/contact", label: "Contact" },
+  {
+    label: "Pricing",
+    children: [
+      { href: "/weddings", label: "Wedding Pricing" },
+      { href: "/sessions", label: "Session Pricing" },
+    ],
+  },
+  {
+    label: "Contact",
+    children: [
+      { href: "/contact", label: "Get in Touch" },
+      { href: "/faqs", label: "FAQs" },
+    ],
+  },
 ];
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   // Lock body scroll while the overlay is open, and allow Escape to close it.
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      setOpenGroup(null);
+      return;
+    }
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKeyDown = (e: KeyboardEvent) => {
@@ -97,14 +116,15 @@ export function Header() {
               className="min-h-full flex flex-col items-center justify-center px-6 py-10"
             >
               {/* Gold-framed wedding detail */}
-              <div className="relative w-[100px] sm:w-[118px] shrink-0 p-1.5 border border-gold">
+              <div className="relative w-[120px] sm:w-[142px] shrink-0 p-1.5 border border-gold">
                 <div className="relative aspect-[2/3] w-full overflow-hidden">
                   <Image
+                    quality={90}
                     src="/images/nav-shoes.jpg"
                     alt=""
                     fill
                     className="object-cover"
-                    sizes="118px"
+                    sizes="142px"
                     priority
                   />
                 </div>
@@ -115,17 +135,66 @@ export function Header() {
               </p>
 
               <ul className="mt-4 w-full max-w-md flex flex-col">
-                {navLinks.map((link) => (
-                  <li key={link.href} className="border-t border-beige last:border-b">
-                    <Link
-                      href={link.href}
-                      onClick={() => setIsOpen(false)}
-                      className="nav-title block text-center text-charcoal hover:text-olive transition-colors py-2 sm:py-2.5 text-xl sm:text-2xl"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
+                {navLinks.map((item) => {
+                  if ("children" in item) {
+                    const expanded = openGroup === item.label;
+                    return (
+                      <li key={item.label}>
+                        <button
+                          type="button"
+                          onClick={() => setOpenGroup(expanded ? null : item.label)}
+                          aria-expanded={expanded}
+                          className="nav-title w-full flex items-center justify-center gap-2 text-charcoal hover:text-olive transition-colors py-2 sm:py-2.5 text-xl sm:text-2xl"
+                        >
+                          {item.label}
+                          <ChevronDown
+                            size={18}
+                            strokeWidth={1.5}
+                            className={`transition-transform duration-300 ${
+                              expanded ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+
+                        <AnimatePresence initial={false}>
+                          {expanded && (
+                            <motion.ul
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.25, ease: "easeOut" }}
+                              className="overflow-hidden"
+                            >
+                              {item.children.map((child) => (
+                                <li key={child.href}>
+                                  <Link
+                                    href={child.href}
+                                    onClick={() => setIsOpen(false)}
+                                    className="nav-title block text-center text-olive-dark hover:text-olive transition-colors py-1.5 text-base sm:text-lg"
+                                  >
+                                    {child.label}
+                                  </Link>
+                                </li>
+                              ))}
+                            </motion.ul>
+                          )}
+                        </AnimatePresence>
+                      </li>
+                    );
+                  }
+
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className="nav-title block text-center text-charcoal hover:text-olive transition-colors py-2 sm:py-2.5 text-xl sm:text-2xl"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
 
               <Link

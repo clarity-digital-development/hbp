@@ -16,6 +16,8 @@ interface BookingCalendarProps {
   selectedTime: string | null;
   onSelectDate: (date: Date) => void;
   onSelectTime: (time: string) => void;
+  /** Weddings take the whole day, so the time picker is suppressed. */
+  hideTimes?: boolean;
 }
 
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -29,6 +31,7 @@ export function BookingCalendar({
   selectedTime,
   onSelectDate,
   onSelectTime,
+  hideTimes = false,
 }: BookingCalendarProps) {
   const [viewMonth, setViewMonth] = useState(() => {
     const d = startOfToday();
@@ -133,7 +136,7 @@ export function BookingCalendar({
       </div>
 
       {/* Time slots — appear under the calendar once a date is picked */}
-      {selectedDate && (
+      {!hideTimes && selectedDate && (
         <div className="mt-8 border-t border-beige pt-6">
           <p className="text-xs sm:text-sm font-medium text-charcoal mb-3 break-words">
             {formatLongDate(selectedDate)}

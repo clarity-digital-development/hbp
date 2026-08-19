@@ -57,7 +57,9 @@
 body {
   color: var(--color-charcoal);
   background: var(--color-off-white);
-  font-family: var(--font-body);
+  /* EB Garamond — the reading face from the pricing pages. UI chrome
+     (buttons, inputs, small labels) stays on the sans below. */
+  font-family: var(--font-reading), Georgia, serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -94,6 +96,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @layer components {
+  /* Chrome only. Deliberately not a bare `button` selector — content-bearing
+     controls (the FAQ accordion, for one) should read in the body serif. */
+  .btn-primary,
+  .btn-secondary,
+  .btn-primary-light,
+  .btn-secondary-light,
+  .btn-sage,
+  .btn-sage-dark,
+  .btn-clip,
+  .form-input {
+    font-family: var(--font-body);
+  }
+
   .btn-primary {
     @apply bg-charcoal text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-dark-gray transition-colors duration-300;
   }
@@ -122,12 +137,55 @@ h1, h2, h3, h4, h5, h6 {
     @apply bg-sage text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-sage-dark transition-colors duration-300;
   }
 
+  /* Clipped corners with a hairline gold frame. The element's own background
+     is the gold; ::before sits one pixel inside carrying the fill, so the frame
+     follows the clipped octagon instead of being cut off by it. A negative
+     z-index keeps it above the gold but behind the label. */
+  .btn-clip {
+    @apply relative isolate px-8 py-3 text-sm tracking-wider uppercase transition-colors duration-300;
+    background: var(--color-gold);
+    clip-path: polygon(
+      0.5rem 0, calc(100% - 0.5rem) 0, 100% 0.5rem,
+      100% calc(100% - 0.5rem), calc(100% - 0.5rem) 100%,
+      0.5rem 100%, 0 calc(100% - 0.5rem), 0 0.5rem
+    );
+  }
+
+  .btn-clip::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    transition: background-color 0.3s ease;
+    clip-path: polygon(
+      0.5rem 0, calc(100% - 0.5rem) 0, 100% 0.5rem,
+      100% calc(100% - 0.5rem), calc(100% - 0.5rem) 100%,
+      0.5rem 100%, 0 calc(100% - 0.5rem), 0 0.5rem
+    );
+  }
+
   .btn-olive {
-    @apply bg-olive text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-olive-dark transition-colors duration-300;
+    @apply btn-clip text-white;
+  }
+
+  .btn-olive::before {
+    background-color: var(--color-olive);
+  }
+
+  .btn-olive:hover::before {
+    background-color: var(--color-olive-dark);
   }
 
   .btn-olive-outline {
-    @apply border border-olive text-olive px-8 py-3 text-sm tracking-wider uppercase hover:bg-olive hover:text-white transition-colors duration-300;
+    @apply btn-clip text-olive hover:text-white;
+  }
+
+  .btn-olive-outline::before {
+    background-color: var(--color-off-white);
+  }
+
+  .btn-olive-outline:hover::before {
+    background-color: var(--color-olive);
   }
 
   /* All-caps Instrument Serif — section headings and nav, per brand direction */

@@ -18,6 +18,7 @@ export default function AboutPage() {
               className="relative aspect-[3/4] rounded-lg overflow-hidden order-2 lg:order-1"
             >
               <Image
+                quality={90}
                 src="/images/portrait-flowers.jpg"
                 alt="Hailey Brooke - Photographer"
                 fill
@@ -192,6 +193,7 @@ export default function AboutPage() {
               className="relative aspect-[4/5] rounded-lg overflow-hidden"
             >
               <Image
+                quality={90}
                 src="/images/hailey-personal.jpg"
                 alt="Hailey away from the camera"
                 fill

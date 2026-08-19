@@ -48,6 +48,8 @@ const config: Config = {
         accent: ["var(--font-accent)"],
         script: ["var(--font-script)"],
         title: ["var(--font-title)", "Georgia", "serif"],
+        flourish: ["var(--font-flourish)", "cursive"],
+        reading: ["var(--font-reading)", "Georgia", "serif"],
       },
       fontSize: {
         "hero": ["6rem", { lineHeight: "1.1" }],

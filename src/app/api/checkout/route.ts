@@ -9,6 +9,7 @@ interface CheckoutBody {
   quantities: Quantities;
   fullName: string;
   phone: string;
+  email?: string;
   social?: string;
   sessionType: string;
   date: string; // ISO yyyy-mm-dd
@@ -53,6 +54,7 @@ export async function POST(req: NextRequest) {
       mode: "payment",
       // Create a Customer so we can send a balance invoice later.
       customer_creation: "always",
+      ...(body.email ? { customer_email: body.email } : {}),
       // Omit payment_method_types entirely → dynamic payment methods
       // (cards, Apple Pay, Google Pay, etc., configured from the Dashboard).
       line_items: [

@@ -3,47 +3,33 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 
+// Mirrors lib/pricing.ts — the same tiers the booking flow and Stripe use, so
+// this page can't drift out of sync with what a client is actually charged.
 const packages = [
   {
-    name: "Essential",
-    price: "$90",
-    originalPrice: "$108",
+    name: "Mini Session",
+    price: "$100",
     duration: "30 minutes",
-    description: "Perfect for mini sessions and simple portraits",
+    description: "Quick, simple, and perfect for updated photos",
     features: [
-      "1 location",
-      "15+ edited digital images",
+      "1 location of your choosing",
+      "All of the best photos from the shoot",
       "Online gallery",
     ],
     popular: false,
   },
   {
-    name: "Signature",
-    price: "$150",
-    originalPrice: "$180",
+    name: "Full Session",
+    price: "$175",
     duration: "60 minutes",
     description: "My most popular package",
     features: [
-      "1 location",
-      "30+ edited digital images",
+      "1 location of your choosing",
+      "One outfit change",
+      "All of the best photos from the shoot",
       "Online gallery",
     ],
     popular: true,
-  },
-  {
-    name: "Luxe",
-    price: "$240",
-    originalPrice: "$288",
-    duration: "90 minutes",
-    description: "The complete experience for milestone events",
-    features: [
-      "2 locations",
-      "50+ edited digital images",
-      "Online gallery",
-      "2 8x10 prints shipped to you",
-      "Styling guide",
-    ],
-    popular: false,
   },
 ];
 
@@ -69,6 +55,23 @@ export default function InvestmentPage() {
           >
             Beautiful photography is an investment in memories that will last a lifetime.
           </motion.p>
+
+          {/* Entry points to the two detailed pricing pages. These live at
+              top-level URLs for SEO but are reached from here, so the nav
+              doesn't gain another tab. */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center mt-10"
+          >
+            <Link href="/weddings" className="btn-olive text-center">
+              Wedding Pricing
+            </Link>
+            <Link href="/sessions" className="btn-olive-outline text-center">
+              Session Pricing
+            </Link>
+          </motion.div>
         </div>
       </section>
 
@@ -90,7 +93,7 @@ export default function InvestmentPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
             {packages.map((pkg, index) => (
               <motion.div
                 key={pkg.name}
@@ -112,11 +115,8 @@ export default function InvestmentPage() {
 
                 <div className="text-center mb-6">
                   <h3 className="font-display text-2xl text-charcoal mb-2">{pkg.name}</h3>
-                  <div className="flex items-baseline justify-center gap-2 mb-1">
-                    <span className="text-lg font-body text-medium-gray/60 line-through decoration-1 decoration-medium-gray/50">
-                      {pkg.originalPrice}
-                    </span>
-                    <span className="text-4xl font-display text-dusty-rose">{pkg.price}</span>
+                  <div className="flex items-baseline justify-center mb-1">
+                    <span className="text-4xl font-display text-olive-dark">{pkg.price}</span>
                   </div>
                   <p className="text-xs uppercase tracking-wider text-olive mb-2">{pkg.duration}</p>
                   <p className="text-medium-gray text-sm">{pkg.description}</p>
