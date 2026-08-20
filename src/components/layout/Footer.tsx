@@ -11,13 +11,13 @@ const quickLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-black text-white">
+    <footer className="bg-light-brown text-white">
       <div className="container-custom section-padding">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand */}
           <div>
-            <h3 className="section-title text-white text-2xl mb-4">Hailey Brooke</h3>
-            <p className="text-white/60 text-sm leading-relaxed">
+            <h3 className="section-title text-white text-2xl mb-4">Hailey Brooke Photography</h3>
+            <p className="text-white/75 text-sm leading-relaxed">
               Capturing your story, one frame at a time. Based in Kentucky,
               available for travel worldwide.
             </p>
@@ -31,7 +31,7 @@ export function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-white/60 hover:text-white text-sm transition-colors"
+                  className="text-white/75 hover:text-white text-sm transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -42,7 +42,7 @@ export function Footer() {
           {/* Contact */}
           <div>
             <h4 className="section-title text-white text-base mb-5">Get in Touch</h4>
-            <div className="flex flex-col gap-3 text-sm text-white/60">
+            <div className="flex flex-col gap-3 text-sm text-white/75">
               <a
                 href="mailto:haileybrookephotography@outlook.com"
                 className="flex items-center gap-2 hover:text-white transition-colors"
@@ -82,7 +82,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-white/15 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/45">
+        <div className="mt-12 pt-8 border-t border-white/25 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/70">
           <p>&copy; {new Date().getFullYear()} Hailey Brooke Photography. All rights reserved.</p>
           <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center">
             <Link href="/privacy" className="hover:text-white transition-colors">

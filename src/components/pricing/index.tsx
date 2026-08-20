@@ -47,7 +47,7 @@ export function TierRow({ tier }: { tier: Tier }) {
               src={tier.image}
               alt={tier.alt ?? ""}
               fill
-              quality={90}
+              quality={84}
               className="object-cover"
               sizes="(max-width: 800px) 100vw, 760px"
             />

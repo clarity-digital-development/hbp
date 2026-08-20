@@ -3,13 +3,12 @@
 import { usePathname } from "next/navigation";
 import { Footer } from "./Footer";
 
-/**
- * The homepage is a locked, single-screen hero — rendering the footer beneath it
- * would reintroduce the scroll it is meant to remove. Every other route keeps
- * the footer as normal.
- */
+// Locked, single-screen routes. Rendering the footer beneath them would
+// reintroduce the scroll they are meant to remove.
+const LOCKED_ROUTES = new Set(["/"]);
+
 export function FooterGate() {
   const pathname = usePathname();
-  if (pathname === "/") return null;
+  if (LOCKED_ROUTES.has(pathname)) return null;
   return <Footer />;
 }

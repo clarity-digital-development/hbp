@@ -25,6 +25,7 @@ const parisienne = Parisienne({
 
 const ebGaramond = EB_Garamond({
   subsets: ["latin"],
+  style: ["normal", "italic"],
   display: "swap",
   variable: "--font-reading",
 });

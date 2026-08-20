@@ -33,7 +33,7 @@ export default function WeddingsPage() {
                 alt="Bride and groom sharing a kiss beside the water"
                 fill
                 priority
-                quality={90}
+                quality={84}
                 className="object-cover"
                 sizes="(max-width: 800px) 100vw, 760px"
               />

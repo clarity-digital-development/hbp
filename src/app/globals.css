@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Jost:wght@300;400;500;600&family=Pinyon+Script&family=Playfair+Display:ital@1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Jost:wght@300;400;500;600&family=Pinyon+Script&family=Playfair+Display:ital@1&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -26,6 +26,10 @@
   --color-olive-dark: #5E6230;
   --color-olive-tint: #EDEFE3;
 
+  /* Warm browns — footer ground and the /about closing band */
+  --color-light-brown: #7E6B52;
+  --color-tan: #C9A87C;
+
   /* Gold — fine accent, photo borders and rules */
   --color-gold: #C2A45C;
   --color-gold-dark: #A5883F;
@@ -45,6 +49,37 @@
   --color-success: #4A7C59;
   --color-warning: #C4A35A;
   --color-error: #B85450;
+
+  /* Channel triplets mirroring the hex tokens above. Tailwind needs these to
+     build rgb(... / <alpha-value>); without them every `/opacity` modifier on a
+     brand colour silently compiles to nothing. */
+  --rgb-black: 10 10 10;
+  --rgb-charcoal: 43 42 38;
+  --rgb-dark-gray: 61 58 51;
+  --rgb-medium-gray: 111 108 99;
+  --rgb-light-gray: 247 244 237;
+  --rgb-off-white: 255 252 245;
+  --rgb-white: 255 255 255;
+  --rgb-cream: 251 248 241;
+  --rgb-beige: 233 230 220;
+  --rgb-mist: 245 242 235;
+  --rgb-olive: 117 122 59;
+  --rgb-olive-dark: 94 98 48;
+  --rgb-olive-tint: 237 239 227;
+  --rgb-light-brown: 126 107 82;
+  --rgb-tan: 201 168 124;
+  --rgb-gold: 194 164 92;
+  --rgb-gold-dark: 165 136 63;
+  --rgb-blush-light: 236 239 226;
+  --rgb-blush: 214 222 197;
+  --rgb-dusty-rose: 164 178 139;
+  --rgb-mauve: 122 137 97;
+  --rgb-sage: 143 161 116;
+  --rgb-sage-dark: 110 127 88;
+  --rgb-sage-deep: 79 98 64;
+  --rgb-success: 74 124 89;
+  --rgb-warning: 196 163 90;
+  --rgb-error: 184 84 80;
 
   /* Typography */
   --font-display: 'Cormorant Garamond', Georgia, serif;
@@ -104,7 +139,8 @@ h1, h2, h3, h4, h5, h6 {
   .btn-secondary-light,
   .btn-sage,
   .btn-sage-dark,
-  .btn-clip,
+  .btn-olive,
+  .btn-olive-outline,
   .form-input {
     font-family: var(--font-body);
   }
@@ -137,12 +173,21 @@ h1, h2, h3, h4, h5, h6 {
     @apply bg-sage text-white px-8 py-3 text-sm tracking-wider uppercase hover:bg-sage-dark transition-colors duration-300;
   }
 
-  /* Clipped corners with a hairline gold frame. The element's own background
-     is the gold; ::before sits one pixel inside carrying the fill, so the frame
-     follows the clipped octagon instead of being cut off by it. A negative
-     z-index keeps it above the gold but behind the label. */
-  .btn-clip {
-    @apply relative isolate px-8 py-3 text-sm tracking-wider uppercase transition-colors duration-300;
+  /* Clipped corners with a hairline gold frame.
+     The element's own background is the gold; ::before sits one pixel inside
+     carrying the fill, so the frame follows the clipped octagon instead of
+     being cut off by it.
+
+     The pseudo-element rules are written against the concrete button classes
+     rather than a shared .btn-clip: Tailwind's @apply copies declarations, not
+     the ::before rule attached to the class, so relying on that silently
+     dropped the fill and left an all-gold button. */
+  .btn-olive,
+  .btn-olive-outline {
+    /* inline-block matters: on a bare inline <a> the absolutely positioned
+       ::before has no usable containing block, so the fill collapses and the
+       button renders as a solid gold slab. */
+    @apply relative isolate inline-block text-center px-8 py-3 text-sm tracking-wider uppercase transition-colors duration-300;
     background: var(--color-gold);
     clip-path: polygon(
       0.5rem 0, calc(100% - 0.5rem) 0, 100% 0.5rem,
@@ -151,7 +196,8 @@ h1, h2, h3, h4, h5, h6 {
     );
   }
 
-  .btn-clip::before {
+  .btn-olive::before,
+  .btn-olive-outline::before {
     content: "";
     position: absolute;
     inset: 1px;
@@ -165,7 +211,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .btn-olive {
-    @apply btn-clip text-white;
+    @apply text-white;
   }
 
   .btn-olive::before {
@@ -177,7 +223,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .btn-olive-outline {
-    @apply btn-clip text-olive hover:text-white;
+    @apply text-olive hover:text-white;
   }
 
   .btn-olive-outline::before {

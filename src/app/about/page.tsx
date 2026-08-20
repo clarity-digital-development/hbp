@@ -205,7 +205,7 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-charcoal">
+      <section className="section-padding bg-tan">
         <div className="container-custom text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -213,13 +213,13 @@ export default function AboutPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="section-title text-3xl md:text-4xl text-white mb-4">
+            <h2 className="section-title text-3xl md:text-4xl text-charcoal mb-4">
               Let&apos;s Work Together
             </h2>
-            <p className="text-beige mb-8 max-w-xl mx-auto">
+            <p className="text-charcoal/80 mb-8 max-w-xl mx-auto">
               I&apos;d love to learn more about you and what you&apos;re looking to capture.
             </p>
-            <a href="/contact" className="btn-primary">
+            <a href="/contact" className="btn-olive">
               Get in Touch
             </a>
           </motion.div>
