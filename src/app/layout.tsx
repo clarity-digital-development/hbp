@@ -30,15 +30,38 @@ const ebGaramond = EB_Garamond({
   variable: "--font-reading",
 });
 
+const TITLE = "Hailey Brooke Photography | Kentucky Portrait & Lifestyle Photographer";
+const DESCRIPTION =
+  "Professional wedding and portrait photography in Kentucky. Capturing your most precious moments with a natural, timeless style. Book your session today.";
+
 export const metadata: Metadata = {
-  title: "Hailey Brooke Photography | Kentucky Portrait & Lifestyle Photographer",
-  description: "Professional wedding and portrait photography in Kentucky. Capturing your most precious moments with a natural, timeless style. Book your session today.",
+  // Without metadataBase, relative Open Graph image paths never resolve to the
+  // absolute URLs Facebook requires.
+  metadataBase: new URL("https://haileybrookephotography.com"),
+  title: TITLE,
+  description: DESCRIPTION,
   keywords: ["wedding photographer", "portrait photographer", "Kentucky photographer", "family photography"],
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://haileybrookephotography.com",
     siteName: "Hailey Brooke Photography",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [
+      {
+        url: "/og/default.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Hailey Brooke Photography — Kentucky wedding and portrait photographer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/og/default.jpg"],
   },
 };
 

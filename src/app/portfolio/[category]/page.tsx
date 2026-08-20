@@ -18,10 +18,15 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: Params): Metadata {
   const g = galleryBySlug(params.category);
   if (!g) return {};
+  const card = `/og/portfolio-${g.slug}.jpg`;
   return {
     title: `${g.title} | Hailey Brooke Photography`,
     description: `${g.note}. ${g.description}`,
     alternates: { canonical: `/portfolio/${g.slug}` },
+    openGraph: {
+      images: [{ url: card, width: 1200, height: 630, alt: `${g.title} by Hailey Brooke Photography` }],
+    },
+    twitter: { card: "summary_large_image", images: [card] },
   };
 }
 

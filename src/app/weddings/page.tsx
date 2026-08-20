@@ -15,6 +15,10 @@ export const metadata: Metadata = {
   description:
     "Wedding and elopement photography across Kentucky. Coverage from intimate elopements to full ten-hour days, with a second shooter, album and Polaroids.",
   alternates: { canonical: "/weddings" },
+  openGraph: {
+    images: [{ url: "/og/weddings.jpg", width: 1200, height: 630, alt: "Wedding photography by Hailey Brooke" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/weddings.jpg"] },
 };
 
 export default function WeddingsPage() {

@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description:
     "Wedding, couples, portrait and brand photography across Kentucky — a look at recent work.",
   alternates: { canonical: "/portfolio" },
+  openGraph: {
+    images: [{ url: "/og/portfolio.jpg", width: 1200, height: 630, alt: "Selected work by Hailey Brooke Photography" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/portfolio.jpg"] },
 };
 
 export default function PortfolioPage() {

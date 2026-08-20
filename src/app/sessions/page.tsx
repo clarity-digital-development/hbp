@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   description:
     "Portrait, couples and family session pricing in Kentucky. Mini sessions and full sessions on location or in-studio.",
   alternates: { canonical: "/sessions" },
+  openGraph: {
+    images: [{ url: "/og/sessions.jpg", width: 1200, height: 630, alt: "Portrait and family sessions by Hailey Brooke" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/sessions.jpg"] },
 };
 
 export default function SessionsPage() {
