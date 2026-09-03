@@ -43,3 +43,28 @@ model Booking {
 
   @@map("bookings")
 }
+
+// Inquiries from the contact form and the wedding path on /book. These were
+// previously email-only, so anything missed in the inbox was gone for good.
+model Inquiry {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  name        String
+  email       String
+  phone       String?
+  sessionType String
+  preferredDate String?
+  message     String
+
+  // new | contacted | booked | lost
+  status      String   @default("new")
+  adminNotes  String?
+
+  // False when the notification email failed but the inquiry was still saved.
+  emailSent   Boolean  @default(true)
+
+  @@index([createdAt])
+  @@map("inquiries")
+}

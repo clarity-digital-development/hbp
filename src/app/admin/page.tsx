@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
-import type { Booking } from "@prisma/client";
+import type { Booking, Inquiry } from "@prisma/client";
 import { isAuthed } from "@/lib/admin-auth";
 import { prisma, isDbConfigured } from "@/lib/db";
 import { LogoutButton } from "./AdminControls";
 import { BookingCard } from "./BookingCard";
+import { InquiryCard } from "./InquiryCard";
 import { CustomInvoiceForm } from "./CustomInvoiceForm";
 
 export const dynamic = "force-dynamic";
@@ -14,29 +15,61 @@ export default async function AdminPage() {
   }
 
   let bookings: Booking[] = [];
+  let inquiries: Inquiry[] = [];
   let dbError = false;
   if (isDbConfigured()) {
     try {
-      bookings = await prisma.booking.findMany({ orderBy: { createdAt: "desc" } });
+      [bookings, inquiries] = await Promise.all([
+        prisma.booking.findMany({ orderBy: { createdAt: "desc" } }),
+        prisma.inquiry.findMany({ orderBy: { createdAt: "desc" } }),
+      ]);
     } catch {
       dbError = true;
     }
   }
+  const newInquiries = inquiries.filter((q) => q.status === "new").length;
 
   return (
     <main className="min-h-screen bg-off-white">
       <div className="container-custom py-10">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="font-display text-3xl md:text-4xl text-charcoal">Bookings</h1>
+            <h1 className="font-display text-3xl md:text-4xl text-charcoal">Dashboard</h1>
             <p className="text-medium-gray text-sm mt-1">
               {bookings.length} booking{bookings.length === 1 ? "" : "s"}
+              {" · "}
+              {inquiries.length} inquir{inquiries.length === 1 ? "y" : "ies"}
+              {newInquiries > 0 ? ` (${newInquiries} new)` : ""}
             </p>
           </div>
           <LogoutButton />
         </div>
 
         {isDbConfigured() && !dbError && <CustomInvoiceForm />}
+
+        {/* Inquiries first: they are the time-sensitive item, and until now they
+            existed only as email and never reached this page at all. */}
+        {isDbConfigured() && !dbError && (
+          <section className="mb-12">
+            <h2 className="font-display text-2xl text-charcoal mb-4">Inquiries</h2>
+            {inquiries.length === 0 ? (
+              <Notice title="No inquiries yet">
+                Messages from the contact form and the wedding path on the booking page will
+                appear here as they come in.
+              </Notice>
+            ) : (
+              <div className="space-y-4">
+                {inquiries.map((q) => (
+                  <InquiryCard key={q.id} inquiry={q} />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {isDbConfigured() && !dbError && (
+          <h2 className="font-display text-2xl text-charcoal mb-4">Bookings</h2>
+        )}
 
         {!isDbConfigured() ? (
           <Notice title="Database not connected">
