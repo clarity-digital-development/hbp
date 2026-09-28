@@ -35,6 +35,10 @@ const slide = (name: string): Slide => ({
 // Order is deliberate: the wide frames are spaced out so the grid breaks its
 // two-up rhythm at intervals rather than clustering.
 const COUPLES = [
+  // Newest session work leads. Eight portrait frames — an even count — so
+  // prepending them cannot shift the parity of the wide frames below.
+  "couples-21","couples-22","couples-23","couples-24",
+  "couples-25","couples-26","couples-27","couples-28",
   "couples-01","couples-03","couples-04","couples-05","couples-02",
   "couples-06","couples-07","couples-08","couples-09","couples-10",
   "couples-11","couples-12","couples-13","couples-14","couples-15",
@@ -42,6 +46,8 @@ const COUPLES = [
 ];
 
 const BRANDING = [
+  // Newest work leads; four portrait frames, so parity is preserved.
+  "branding-11","branding-12","branding-13","branding-14",
   "branding-01","branding-03","branding-04","branding-05","branding-02",
   "branding-06","branding-07","branding-08","branding-09","branding-10",
 ];
