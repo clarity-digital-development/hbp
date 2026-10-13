@@ -2,8 +2,8 @@
 const nextConfig = {
   images: {
     // WebP only. AVIF compresses a little better but encodes ~5x slower, and
-    // Railway's filesystem cache is ephemeral — so every deploy paid that cost
-    // again on real visitors (measured ~8s for a cold 1920px transform).
+    // each format is a separate transformation — on Vercel that doubles the
+    // optimisation count billed against the plan for little visible gain.
     formats: ["image/webp"],
     // 1600 replaces 1920: the widest photo column on the site is 760px, which
     // needs 1520px at 2x. 1920 was always overshooting.
