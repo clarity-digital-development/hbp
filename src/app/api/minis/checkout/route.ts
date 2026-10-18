@@ -11,7 +11,7 @@ import {
 } from "@/lib/minis";
 import { attachCheckoutToHold, dropHold, holdMiniSlot } from "@/lib/mini-slots";
 import { formatSessionDate } from "@/lib/payments";
-import { clientIp, trustedOrigin } from "@/lib/site";
+import { trustedOrigin, visitorKey } from "@/lib/site";
 
 export const runtime = "nodejs";
 
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Please choose how you'd like to pay." }, { status: 400 });
   }
 
-  const hold = await holdMiniSlot(time, now, clientIp(req));
+  const hold = await holdMiniSlot(time, visitorKey(req), email, now);
   if (!hold.ok && hold.reason === "limit") {
     return NextResponse.json(
       { error: "You already have times held in checkout. Finish or cancel those first, then try again." },
