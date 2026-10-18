@@ -11,34 +11,36 @@ datasource db {
 }
 
 model Booking {
-  id                    String   @id @default(cuid())
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // "session" = booked through the self-serve deposit flow.
   // "invoice" = a one-off custom invoice (e.g. weddings) created from /admin.
-  kind                  String   @default("session")
+  kind String @default("session")
 
-  fullName              String
-  email                 String?
-  phone                 String
-  social                String?
+  fullName String
+  email    String?
+  phone    String
+  social   String?
 
-  sessionType           String
-  packageName           String
-  sessionDate           String
-  sessionTime           String
-  notes                 String?
-  prints                String?
+  sessionType String
+  packageName String
+  sessionDate String
+  sessionTime String
+  notes       String?
+  prints      String?
+  // Paid-at-booking extras, e.g. "Rush delivery, Sneak peeks" (Christmas minis).
+  addOns      String?
 
-  total                 Int
-  deposit               Int
-  balance               Int
-  depositPaid           Boolean  @default(false)
-  paidInFull            Boolean  @default(false)
-  status                String   @default("confirmed") // confirmed | completed | cancelled
+  total       Int
+  deposit     Int
+  balance     Int
+  depositPaid Boolean @default(false)
+  paidInFull  Boolean @default(false)
+  status      String  @default("confirmed") // confirmed | completed | cancelled
 
-  stripeSessionId       String?  @unique
+  stripeSessionId       String? @unique
   stripeCustomerId      String?
   stripePaymentIntentId String?
   balanceInvoiceId      String?
@@ -73,24 +75,38 @@ model EmailLog {
 // Inquiries from the contact form and the wedding path on /book. These were
 // previously email-only, so anything missed in the inbox was gone for good.
 model Inquiry {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  name        String
-  email       String
-  phone       String?
-  sessionType String
+  name          String
+  email         String
+  phone         String?
+  sessionType   String
   preferredDate String?
-  message     String
+  message       String
 
   // new | contacted | booked | lost
-  status      String   @default("new")
-  adminNotes  String?
+  status     String  @default("new")
+  adminNotes String?
 
   // False when the notification email failed but the inquiry was still saved.
-  emailSent   Boolean  @default(true)
+  emailSent Boolean @default(true)
 
   @@index([createdAt])
   @@map("inquiries")
+}
+
+// Reserves one fixed-time mini slot while its client is in Stripe Checkout,
+// so two families can't pay for the same time. The primary key is the slot
+// itself, which makes "only one live hold per slot" a database guarantee.
+model SlotHold {
+  slotKey         String   @id
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime
+  // Secret in the Checkout cancel URL; lets that client release the hold.
+  releaseKey      String
+  stripeSessionId String?
+
+  @@map("slot_holds")
 }

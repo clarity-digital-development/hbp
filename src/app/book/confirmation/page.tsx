@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
+import { formatSessionDate } from "@/lib/payments";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,8 @@ export default async function ConfirmationPage({
   }
 
   const firstName = m.fullName ? m.fullName.split(" ")[0] : "";
+  // Christmas minis can be paid in full up front, leaving no balance.
+  const balance = Number(m.balance || 0);
 
   return (
     <main className="min-h-screen bg-off-white">
@@ -52,10 +55,12 @@ export default async function ConfirmationPage({
             <p className="text-medium-gray mb-8 max-w-md mx-auto">
               {firstName ? `Thank you, ${firstName}! ` : ""}
               {paid
-                ? "Your deposit is paid and your date is reserved. "
+                ? balance > 0
+                  ? "Your deposit is paid and your date is reserved. "
+                  : "You're paid in full and your spot is reserved. "
                 : "Your request has been received. "}
               I&apos;ll reach out shortly to confirm the details.
-              {m.balance && (
+              {balance > 0 && (
                 <>
                   {" "}
                   After your session, I&apos;ll email you a secure link to pay your remaining
@@ -69,11 +74,15 @@ export default async function ConfirmationPage({
                 <dl className="space-y-3 text-sm">
                   <Row label="Session" value={m.sessionType} />
                   <Row label="Package" value={m.packageName} />
-                  <Row label="Date" value={m.date} />
+                  <Row label="Date" value={m.date ? formatSessionDate(m.date) : undefined} />
                   <Row label="Time" value={m.time} />
                   {m.prints && <Row label="Prints" value={m.prints} />}
-                  <Row label="Deposit paid" value={m.deposit ? `$${m.deposit}` : undefined} />
-                  <Row label="Remaining balance" value={m.balance ? `$${m.balance}` : undefined} />
+                  {m.addOns && <Row label="Add-ons" value={m.addOns} />}
+                  <Row
+                    label={balance > 0 ? "Deposit paid" : "Paid"}
+                    value={m.deposit ? `$${m.deposit}` : undefined}
+                  />
+                  {balance > 0 && <Row label="Remaining balance" value={`$${balance}`} />}
                   {email && <Row label="Confirmation sent to" value={email} />}
                 </dl>
               </div>

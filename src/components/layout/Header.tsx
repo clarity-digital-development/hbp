@@ -19,6 +19,7 @@ const navLinks: NavItem[] = [
     children: [
       { href: "/weddings", label: "Wedding Pricing" },
       { href: "/sessions", label: "Session Pricing" },
+      { href: "/christmas-minis", label: "Christmas Minis" },
     ],
   },
   {

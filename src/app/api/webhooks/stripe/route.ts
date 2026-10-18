@@ -1,45 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { Resend } from "resend";
 import { getStripe } from "@/lib/stripe";
 import { prisma, isDbConfigured } from "@/lib/db";
 import { recordFinalPayment } from "@/lib/final-payment";
+import { OWNER_EMAIL, sendEmail } from "@/lib/emails";
 
 export const runtime = "nodejs";
-
-const TO_EMAIL = "bookings@haileybrookephotography.com";
 
 function toInt(v: string | undefined): number {
   const n = parseInt(v || "0", 10);
   return Number.isFinite(n) ? n : 0;
 }
 
-/** Notifies Hailey that a deposit landed. Never throws — a mail failure must
+/** Notifies Hailey that a booking was paid. Never throws — a mail failure must
  *  not cost us the booking row, which is the durable record. */
-async function notifyBooking(session: Stripe.Checkout.Session) {
-  if (!process.env.RESEND_API_KEY) {
-    console.warn("RESEND_API_KEY not set — booking notification skipped");
-    return;
-  }
+async function notifyBooking(session: Stripe.Checkout.Session, doubleBooked = false) {
   const m = session.metadata || {};
   const email = session.customer_details?.email || "";
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  const from =
-    process.env.CONTACT_FROM_EMAIL ||
-    "Hailey Brooke Photography <noreply@haileybrookephotography.com>";
 
-  const { error } = await resend.emails.send({
-    from,
-    to: TO_EMAIL,
+  const { ok, error } = await sendEmail({
+    to: OWNER_EMAIL,
     ...(email ? { replyTo: email } : {}),
-    subject: `New booking — ${m.packageName || "Session"} — ${m.fullName || "Unknown"}`,
+    subject: `${doubleBooked ? "⚠ Double-booked — " : ""}New booking — ${m.packageName || "Session"} — ${m.fullName || "Unknown"}`,
     text: [
-      `${m.fullName || "Unknown"} just paid a deposit.`,
+      ...(doubleBooked
+        ? [`⚠ Someone else already holds ${m.date} at ${m.time}. Check both bookings and move or refund one.`, ``]
+        : []),
+      `${m.fullName || "Unknown"} just ${toInt(m.balance) <= 0 ? "paid in full" : "paid a deposit"}.`,
       ``,
       `Package:  ${m.packageName || "-"}`,
       `Type:     ${m.sessionType || "-"}`,
       `Date:     ${m.date || "-"} ${m.time || ""}`,
-      `Deposit:  $${toInt(m.deposit)} paid`,
+      `Paid:     $${toInt(m.deposit)}`,
       `Balance:  $${toInt(m.balance)} due`,
       `Total:    $${toInt(m.sessionTotal)}`,
       ``,
@@ -47,6 +39,7 @@ async function notifyBooking(session: Stripe.Checkout.Session) {
       `Phone:    ${m.phone || "-"}`,
       `Social:   ${m.social || "-"}`,
       `Prints:   ${m.prints || "none"}`,
+      ...(m.addOns ? [`Add-ons:  ${m.addOns}`] : []),
       ``,
       `Notes:`,
       m.notes || "(none)",
@@ -55,7 +48,7 @@ async function notifyBooking(session: Stripe.Checkout.Session) {
     ].join("\n"),
   });
 
-  if (error) console.error("Booking notification failed to send:", error);
+  if (!ok) console.error("Booking notification failed to send:", error);
 }
 
 // Stripe needs the raw, unparsed request body to verify the signature.
@@ -107,6 +100,20 @@ export async function POST(req: NextRequest) {
           select: { id: true },
         });
 
+        // Fixed-time minis hold their slot through checkout, so this should
+        // never find anyone. If it does, Hailey needs to hear about it.
+        const doubleBooked =
+          !existing && m.purpose === "mini"
+            ? (await prisma.booking.count({
+                where: {
+                  packageName: m.packageName,
+                  sessionDate: m.date,
+                  sessionTime: m.time,
+                  status: { not: "cancelled" },
+                },
+              })) > 0
+            : false;
+
         await prisma.booking.upsert({
           where: { stripeSessionId: session.id },
           create: {
@@ -120,6 +127,7 @@ export async function POST(req: NextRequest) {
             sessionTime: m.time || "",
             notes: m.notes || null,
             prints: m.prints || null,
+            addOns: m.addOns || null,
             total: toInt(m.sessionTotal),
             deposit: toInt(m.deposit),
             balance: toInt(m.balance),
@@ -136,7 +144,7 @@ export async function POST(req: NextRequest) {
         });
 
         // Only notify the first time, so a retry doesn't re-send the email.
-        if (!existing) await notifyBooking(session);
+        if (!existing) await notifyBooking(session, doubleBooked);
 
         console.log("Deposit paid — booking confirmed:", m.fullName, m.date, m.time);
         break;

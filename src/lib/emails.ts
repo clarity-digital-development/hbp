@@ -18,7 +18,8 @@ import {
 export const OWNER_EMAIL = "bookings@haileybrookephotography.com";
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://haileybrookephotography.com").replace(/\/$/, "");
 
-export type Email = { to: string; subject: string; text: string; html: string; replyTo?: string };
+/** html is optional: Hailey's own plain notifications send text only. */
+export type Email = { to: string; subject: string; text: string; html?: string; replyTo?: string };
 
 type BookingLike = {
   kind: string;
@@ -57,7 +58,7 @@ export async function sendEmail(email: Email): Promise<{ ok: boolean; error?: st
       replyTo: email.replyTo ?? OWNER_EMAIL,
       subject: email.subject,
       text: email.text,
-      html: email.html,
+      ...(email.html ? { html: email.html } : {}),
     });
     if (error) {
       console.error("Resend error:", error);

@@ -101,6 +101,12 @@ export function BookingCard({ booking: b }: { booking: Booking }) {
         </Field>
       </div>
 
+      {b.addOns && (
+        <p className="text-xs text-medium-gray mb-4">
+          <span className="uppercase tracking-wider">Add-ons</span> · {b.addOns}
+        </p>
+      )}
+
       {b.prints && (
         <p className="text-xs text-medium-gray mb-4">
           <span className="uppercase tracking-wider">Prints</span> · {b.prints}
