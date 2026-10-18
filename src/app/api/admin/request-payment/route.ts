@@ -45,9 +45,11 @@ export async function POST(req: NextRequest) {
         await prisma.booking.update({ where: { id: booking.id }, data: { paidInFull: true } });
         return NextResponse.json({ error: "Their Stripe invoice is already paid — marked paid in full." }, { status: 409 });
       }
-      if (invoice.status === "open" || invoice.status === "draft") {
+      // Only a voided invoice is safely dead: Stripe still accepts payment on
+      // "uncollectible" ones, and drafts and open ones can obviously be paid.
+      if (invoice.status !== "void") {
         return NextResponse.json(
-          { error: "A Stripe invoice for this balance is still open. Void it in Stripe first so they can't pay twice." },
+          { error: "A Stripe invoice for this balance can still be paid. Void it in Stripe first so they can't pay twice." },
           { status: 409 }
         );
       }
