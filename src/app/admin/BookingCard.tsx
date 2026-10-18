@@ -3,13 +3,21 @@
 import { useState } from "react";
 import type { Booking } from "@prisma/client";
 import { ChevronDown, ExternalLink } from "lucide-react";
-import { SendInvoiceButton } from "./AdminControls";
+import { RequestPaymentButton } from "./AdminControls";
+import { formatCents, paymentUrl } from "@/lib/payments";
 
 function StatusPill({ booking: b }: { booking: Booking }) {
   if (b.paidInFull) {
     return (
       <span className="inline-block text-xs px-2.5 py-1 rounded-full bg-sage/20 text-sage-dark whitespace-nowrap">
         Paid in full
+      </span>
+    );
+  }
+  if (b.finalRequestedAt) {
+    return (
+      <span className="inline-block text-xs px-2.5 py-1 rounded-full bg-warning/20 text-charcoal whitespace-nowrap">
+        Balance requested
       </span>
     );
   }
@@ -49,10 +57,10 @@ export function BookingCard({ booking: b }: { booking: Booking }) {
   const [open, setOpen] = useState(false);
   const isInvoice = b.kind === "invoice";
   const hasNotes = Boolean(b.notes && b.notes.trim());
-  // Session bookings: show "Send balance invoice" when there's still a balance.
-  // Invoice bookings: the invoice was already sent — show a "View invoice" link instead.
-  const showSendBalance = !isInvoice && !b.paidInFull && b.balance > 0;
-  const showViewInvoice = isInvoice && Boolean(b.balanceInvoiceUrl);
+  // Anything with a balance gets a /pay link. Legacy Stripe-invoice bookings
+  // keep their hosted invoice link instead.
+  const showRequest = !isInvoice && !b.paidInFull && b.balance > 0;
+  const showViewInvoice = Boolean(b.balanceInvoiceUrl);
 
   return (
     <article className="bg-white rounded-lg shadow-sm p-5 md:p-6">
@@ -81,12 +89,15 @@ export function BookingCard({ booking: b }: { booking: Booking }) {
         </Field>
         <Field label="Total">
           <p>${b.total}</p>
-          {!isInvoice && (
-            <p className="text-medium-gray text-xs">${b.deposit} deposit</p>
+          {!isInvoice && b.deposit > 0 && (
+            <p className="text-medium-gray text-xs">
+              ${b.deposit} {b.kind === "session" ? "deposit" : "paid before"}
+            </p>
           )}
         </Field>
         <Field label={isInvoice ? "Due" : "Balance"}>
           <p className={b.paidInFull ? "text-medium-gray" : ""}>${b.paidInFull ? 0 : b.balance}</p>
+          {b.tipCents > 0 && <p className="text-olive text-xs">{formatCents(b.tipCents)} tip</p>}
         </Field>
       </div>
 
@@ -97,10 +108,15 @@ export function BookingCard({ booking: b }: { booking: Booking }) {
       )}
 
       {/* Actions */}
-      {(showSendBalance || showViewInvoice || hasNotes) && (
+      {(showRequest || showViewInvoice || hasNotes) && (
         <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-beige/60">
-          {showSendBalance && (
-            <SendInvoiceButton bookingId={b.id} alreadySent={Boolean(b.balanceInvoiceId)} />
+          {showRequest && (
+            <RequestPaymentButton
+              bookingId={b.id}
+              url={b.paymentToken ? paymentUrl(b.paymentToken) : null}
+              requestedAt={b.finalRequestedAt ? new Date(b.finalRequestedAt).toISOString() : null}
+              hasEmail={Boolean(b.email)}
+            />
           )}
           {showViewInvoice && (
             <a

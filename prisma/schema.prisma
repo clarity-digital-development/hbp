@@ -44,7 +44,30 @@ model Booking {
   balanceInvoiceId      String?
   balanceInvoiceUrl     String?
 
+  // Final payment through the site's own payment page, which replaces Stripe
+  // invoices for the balance so the client can add an optional tip.
+  // paymentToken is the private link (/pay/<token>); it is the only credential
+  // the client needs, so it is long and random.
+  paymentToken           String?   @unique
+  tipEnabled             Boolean   @default(true)
+  finalRequestedAt       DateTime?
+  finalPaidAt            DateTime?
+  tipCents               Int       @default(0)
+  finalCheckoutSessionId String?   @unique
+
   @@map("bookings")
+}
+
+// One row per follow-up email sent for a booking. The unique pair is claimed
+// before sending, so a retried or overlapping cron run can never send twice.
+model EmailLog {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  bookingId String
+  kind      String
+
+  @@unique([bookingId, kind])
+  @@map("email_logs")
 }
 
 // Inquiries from the contact form and the wedding path on /book. These were

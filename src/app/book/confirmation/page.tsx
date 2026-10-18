@@ -58,8 +58,8 @@ export default async function ConfirmationPage({
               {m.balance && (
                 <>
                   {" "}
-                  You&apos;ll receive a secure link to pay your remaining balance of ${m.balance}{" "}
-                  before your session.
+                  After your session, I&apos;ll email you a secure link to pay your remaining
+                  balance of ${m.balance}.
                 </>
               )}
             </p>
@@ -73,7 +73,7 @@ export default async function ConfirmationPage({
                   <Row label="Time" value={m.time} />
                   {m.prints && <Row label="Prints" value={m.prints} />}
                   <Row label="Deposit paid" value={m.deposit ? `$${m.deposit}` : undefined} />
-                  <Row label="Balance due at session" value={m.balance ? `$${m.balance}` : undefined} />
+                  <Row label="Remaining balance" value={m.balance ? `$${m.balance}` : undefined} />
                   {email && <Row label="Confirmation sent to" value={email} />}
                 </dl>
               </div>

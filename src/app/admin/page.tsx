@@ -5,7 +5,8 @@ import { prisma, isDbConfigured } from "@/lib/db";
 import { LogoutButton } from "./AdminControls";
 import { BookingCard } from "./BookingCard";
 import { InquiryCard } from "./InquiryCard";
-import { CustomInvoiceForm } from "./CustomInvoiceForm";
+import { PaymentRequestForm } from "./PaymentRequestForm";
+import { formatCents } from "@/lib/payments";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,7 @@ export default async function AdminPage() {
     }
   }
   const newInquiries = inquiries.filter((q) => q.status === "new").length;
+  const tipsCents = bookings.reduce((sum, b) => sum + b.tipCents, 0);
 
   return (
     <main className="min-h-screen bg-off-white">
@@ -40,12 +42,13 @@ export default async function AdminPage() {
               {" · "}
               {inquiries.length} inquir{inquiries.length === 1 ? "y" : "ies"}
               {newInquiries > 0 ? ` (${newInquiries} new)` : ""}
+              {tipsCents > 0 ? ` · ${formatCents(tipsCents)} in tips` : ""}
             </p>
           </div>
           <LogoutButton />
         </div>
 
-        {isDbConfigured() && !dbError && <CustomInvoiceForm />}
+        {isDbConfigured() && !dbError && <PaymentRequestForm />}
 
         {/* Inquiries first: they are the time-sensitive item, and until now they
             existed only as email and never reached this page at all. */}

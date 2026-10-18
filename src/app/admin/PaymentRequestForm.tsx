@@ -4,17 +4,22 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, X, Copy, ExternalLink } from "lucide-react";
 
-interface CreatedInvoice {
+interface Created {
   url: string;
-  bookingId: string;
+  emailed: boolean;
+  warning?: string;
 }
 
-export function CustomInvoiceForm() {
+/**
+ * A payment link for a client who didn't book through the site (a wedding, a
+ * referral). The client pays on the same /pay page, tip option included.
+ */
+export function PaymentRequestForm() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [created, setCreated] = useState<CreatedInvoice | null>(null);
+  const [created, setCreated] = useState<Created | null>(null);
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle");
 
   const [fullName, setFullName] = useState("");
@@ -23,8 +28,10 @@ export function CustomInvoiceForm() {
   const [sessionType, setSessionType] = useState("");
   const [sessionDate, setSessionDate] = useState("");
   const [sessionTime, setSessionTime] = useState("");
-  const [total, setTotal] = useState("");
+  const [amountDue, setAmountDue] = useState("");
+  const [alreadyPaid, setAlreadyPaid] = useState("");
   const [description, setDescription] = useState("");
+  const [tipEnabled, setTipEnabled] = useState(true);
 
   const reset = () => {
     setFullName("");
@@ -33,8 +40,10 @@ export function CustomInvoiceForm() {
     setSessionType("");
     setSessionDate("");
     setSessionTime("");
-    setTotal("");
+    setAmountDue("");
+    setAlreadyPaid("");
     setDescription("");
+    setTipEnabled(true);
     setError("");
     setCreated(null);
     setCopyState("idle");
@@ -45,7 +54,7 @@ export function CustomInvoiceForm() {
     setError("");
     setSubmitting(true);
     try {
-      const res = await fetch("/api/admin/create-invoice", {
+      const res = await fetch("/api/admin/payment-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -55,17 +64,19 @@ export function CustomInvoiceForm() {
           sessionType,
           sessionDate,
           sessionTime,
-          total: Number(total),
+          amountDue: Number(amountDue),
+          alreadyPaid: alreadyPaid ? Number(alreadyPaid) : 0,
           description,
+          tipEnabled,
         }),
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Failed to create invoice.");
+        setError(data.error || "Failed to create the payment request.");
         setSubmitting(false);
         return;
       }
-      setCreated({ url: data.invoiceUrl, bookingId: data.bookingId });
+      setCreated({ url: data.url, emailed: data.emailed, warning: data.warning });
       setSubmitting(false);
       router.refresh(); // pull the new booking into the dashboard list
     } catch {
@@ -88,11 +99,8 @@ export function CustomInvoiceForm() {
   if (!open) {
     return (
       <div className="mb-6 flex justify-end">
-        <button
-          onClick={() => setOpen(true)}
-          className="inline-flex items-center gap-2 btn-sage-dark"
-        >
-          <Plus size={16} /> New custom invoice
+        <button onClick={() => setOpen(true)} className="inline-flex items-center gap-2 btn-sage-dark">
+          <Plus size={16} /> New payment request
         </button>
       </div>
     );
@@ -101,11 +109,10 @@ export function CustomInvoiceForm() {
   return (
     <div className="bg-white rounded-lg shadow-sm p-5 md:p-6 mb-6">
       <div className="flex items-center justify-between mb-5">
-        <h2 className="font-display text-2xl text-charcoal">New custom invoice</h2>
+        <h2 className="font-display text-2xl text-charcoal">New payment request</h2>
         <button
           onClick={() => {
             setOpen(false);
-            // keep `created` so user can re-open later? simpler: reset on close
             reset();
           }}
           aria-label="Close"
@@ -116,13 +123,20 @@ export function CustomInvoiceForm() {
       </div>
 
       {created ? (
-        // ---- Success state: show the hosted invoice link --------------
+        // ---- Success state: show the payment link ----------------------
         <div className="space-y-4">
-          <div className="rounded-md bg-sage/15 border border-sage/30 p-4">
-            <p className="text-charcoal font-medium mb-1">Invoice sent</p>
+          <div
+            className={`rounded-md p-4 border ${
+              created.emailed ? "bg-sage/15 border-sage/30" : "bg-warning/10 border-warning/30"
+            }`}
+          >
+            <p className="text-charcoal font-medium mb-1">
+              {created.emailed ? "Payment link sent" : "Payment link created"}
+            </p>
             <p className="text-medium-gray text-sm">
-              Stripe emailed the hosted invoice to {email || "the client"}. You can also share the
-              payment link directly:
+              {created.emailed
+                ? `Emailed to ${email}. You can also text them the link:`
+                : created.warning || "Copy the link and send it to them:"}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -193,7 +207,7 @@ export function CustomInvoiceForm() {
                 placeholder="(555) 123-4567"
               />
             </Field>
-            <Field label="Session type" required>
+            <Field label="What it's for" required>
               <input
                 type="text"
                 required
@@ -203,10 +217,9 @@ export function CustomInvoiceForm() {
                 placeholder="Wedding, Branding, etc."
               />
             </Field>
-            <Field label="Date" required>
+            <Field label="Session date">
               <input
                 type="date"
-                required
                 value={sessionDate}
                 onChange={(e) => setSessionDate(e.target.value)}
                 className="form-input"
@@ -221,35 +234,59 @@ export function CustomInvoiceForm() {
                 placeholder="e.g. 2:00 PM"
               />
             </Field>
-            <Field label="Total (USD)" required>
+            <Field label="Amount due now (USD)" required>
               <input
                 type="number"
                 required
                 min={1}
                 step={1}
-                value={total}
-                onChange={(e) => setTotal(e.target.value)}
+                value={amountDue}
+                onChange={(e) => setAmountDue(e.target.value)}
                 className="form-input"
-                placeholder="2500"
+                placeholder="2000"
+              />
+            </Field>
+            <Field label="Already paid (USD)">
+              <input
+                type="number"
+                min={0}
+                step={1}
+                value={alreadyPaid}
+                onChange={(e) => setAlreadyPaid(e.target.value)}
+                className="form-input"
+                placeholder="e.g. a 500 retainer"
               />
             </Field>
           </div>
 
-          <Field label="Description" required>
+          <Field label="Notes (only you see these)">
             <textarea
-              required
-              rows={3}
+              rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="form-input resize-y"
-              placeholder="e.g. Wedding photography — 6 hours coverage, 400+ edited images, online gallery."
+              placeholder="e.g. 6 hours coverage, second shooter."
             />
           </Field>
 
+          <label className="flex items-start gap-3 text-sm text-charcoal cursor-pointer">
+            <input
+              type="checkbox"
+              checked={tipEnabled}
+              onChange={(e) => setTipEnabled(e.target.checked)}
+              className="mt-0.5 h-4 w-4 accent-olive"
+            />
+            <span>
+              Offer an optional tip
+              <span className="block text-xs text-medium-gray">
+                5%, 10% or 15% of the full price, or a custom amount. &quot;No tip&quot; is selected by
+                default.
+              </span>
+            </span>
+          </label>
+
           {error && (
-            <p className="bg-error/10 border border-error/30 text-error rounded-md p-3 text-sm">
-              {error}
-            </p>
+            <p className="bg-error/10 border border-error/30 text-error rounded-md p-3 text-sm">{error}</p>
           )}
 
           <div className="flex items-center justify-end gap-3 pt-2">
@@ -268,7 +305,7 @@ export function CustomInvoiceForm() {
               disabled={submitting}
               className="btn-sage-dark disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {submitting ? "Creating…" : "Create & send invoice"}
+              {submitting ? "Sending…" : "Create & send link"}
             </button>
           </div>
         </form>

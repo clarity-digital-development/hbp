@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getStripe, isStripeConfigured } from "@/lib/stripe";
+import { CHECKOUT_BRANDING, getStripe, isStripeConfigured } from "@/lib/stripe";
 import { computeTotals, printsSummary, type Quantities } from "@/lib/pricing";
 
 export const runtime = "nodejs";
@@ -72,6 +72,7 @@ export async function POST(req: NextRequest) {
       ],
       // Collect the customer's email so a balance link can be sent later.
       phone_number_collection: { enabled: false },
+      branding_settings: CHECKOUT_BRANDING,
       success_url: `${origin}/book/confirmation?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/book?status=cancelled`,
       metadata: {

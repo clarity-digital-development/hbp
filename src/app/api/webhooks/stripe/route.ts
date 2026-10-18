@@ -3,6 +3,7 @@ import type Stripe from "stripe";
 import { Resend } from "resend";
 import { getStripe } from "@/lib/stripe";
 import { prisma, isDbConfigured } from "@/lib/db";
+import { recordFinalPayment } from "@/lib/final-payment";
 
 export const runtime = "nodejs";
 
@@ -91,6 +92,14 @@ export async function POST(req: NextRequest) {
           throw new Error("DATABASE_URL is not set — cannot persist booking");
         }
 
+        // A balance paid from a /pay link. Routed first: the code below reads
+        // every other checkout as a brand-new deposit booking.
+        if (m.purpose === "final-payment") {
+          const result = await recordFinalPayment(session);
+          console.log("Final payment webhook:", result, session.id);
+          break;
+        }
+
         // Idempotent: one booking per checkout session, so Stripe retries and
         // manual replays are safe.
         const existing = await prisma.booking.findUnique({
@@ -130,6 +139,16 @@ export async function POST(req: NextRequest) {
         if (!existing) await notifyBooking(session);
 
         console.log("Deposit paid — booking confirmed:", m.fullName, m.date, m.time);
+        break;
+      }
+
+      // A bank-debit final payment clears days after checkout completes.
+      case "checkout.session.async_payment_succeeded": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        if (session.metadata?.purpose !== "final-payment") break;
+        if (!isDbConfigured()) throw new Error("DATABASE_URL is not set");
+        const result = await recordFinalPayment(session);
+        console.log("Final payment (async) webhook:", result, session.id);
         break;
       }
 

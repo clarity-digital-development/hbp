@@ -25,3 +25,12 @@ export function getStripe(): Stripe {
 export function isStripeConfigured(): boolean {
   return Boolean(process.env.STRIPE_SECRET_KEY);
 }
+
+/**
+ * Checkout colors: the site's tan and olive. Set on each session rather than
+ * in the Stripe dashboard, so the account-wide branding is left alone.
+ */
+export const CHECKOUT_BRANDING = {
+  background_color: "#C9A87C",
+  button_color: "#757A3B",
+} as const;
