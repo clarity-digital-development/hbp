@@ -17,9 +17,9 @@ export const metadata: Metadata = {
     "Outdoor Christmas mini sessions in Lexington, Kentucky on Saturday, November 21. 15 minutes, 10 photos, $95 — with hot chocolate.",
   alternates: { canonical: "/christmas-minis" },
   openGraph: {
-    images: [{ url: "/og/christmas-minis.jpg", width: 1200, height: 630, alt: "The Christmas mini set: a white bench between two decorated trees" }],
+    images: [{ url: "/og/christmas-minis-card.jpg", width: 1200, height: 630, alt: "Christmas Minis with Hailey Brooke Photography — Saturday, Nov 21 in Lexington, KY, $95" }],
   },
-  twitter: { card: "summary_large_image", images: ["/og/christmas-minis.jpg"] },
+  twitter: { card: "summary_large_image", images: ["/og/christmas-minis-card.jpg"] },
 };
 
 function Fact({ label, children }: { label: string; children: React.ReactNode }) {
