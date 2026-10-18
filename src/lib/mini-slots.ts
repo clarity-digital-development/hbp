@@ -46,8 +46,8 @@ export async function takenMiniTimes(now = new Date()): Promise<Set<string>> {
  * Reserves a slot for one checkout: "taken" when it is booked or someone else
  * is paying for it, "limit" when this visitor already holds too many.
  *
- * `visitor` identifies who is asking (see visitorKey in lib/site); `email` is
- * the address they're booking with.
+ * `visitor` identifies who is asking, for the cap (see visitorKey in
+ * lib/site); `owner` is the browser's private cookie token.
  *
  * No transaction needed: the slot is the hold's primary key, so of two
  * people racing for the same free slot, exactly one insert succeeds.
@@ -55,7 +55,7 @@ export async function takenMiniTimes(now = new Date()): Promise<Set<string>> {
 export async function holdMiniSlot(
   time: string,
   visitor: string,
-  email: string,
+  owner: string,
   now = new Date()
 ): Promise<HoldResult> {
   const booked = await prisma.booking.count({
@@ -78,21 +78,18 @@ export async function holdMiniSlot(
 
   // Their own hold on this time (they closed the Stripe tab and came back):
   // end that checkout and let them start again, rather than telling them
-  // their own time is taken for the next half hour. "Their own" needs the
-  // same email as well as the same IP: phones on one mobile carrier often
-  // share an IP, and a different family must never cancel this checkout.
+  // their own time is taken for the next half hour. "Their own" is proven
+  // only by the private cookie from that browser: an IP or an email can be
+  // shared or known by someone else, who must never cancel this checkout.
   const existing = await prisma.slotHold.findUnique({ where: { slotKey } });
-  if (existing && existing.ip === visitor && existing.stripeSessionId && isStripeConfigured()) {
-    const session = await getStripe().checkout.sessions.retrieve(existing.stripeSessionId);
-    if (session.customer_email?.toLowerCase() === email.toLowerCase()) {
-      if ((await releaseHold(existing)) !== "released") return { ok: false, reason: "taken" };
-    }
+  if (existing?.owner && existing.owner === owner && existing.stripeSessionId) {
+    if ((await releaseHold(existing)) !== "released") return { ok: false, reason: "taken" };
   }
 
   const releaseKey = randomBytes(18).toString("base64url");
   try {
     await prisma.slotHold.create({
-      data: { slotKey, releaseKey, ip: visitor, expiresAt: new Date(now.getTime() + HOLD_MINUTES * 60_000) },
+      data: { slotKey, releaseKey, ip: visitor, owner, expiresAt: new Date(now.getTime() + HOLD_MINUTES * 60_000) },
     });
   } catch (err) {
     if ((err as { code?: string })?.code === "P2002") return { ok: false, reason: "taken" }; // someone else is in checkout

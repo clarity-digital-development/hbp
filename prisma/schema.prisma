@@ -109,6 +109,9 @@ model SlotHold {
   stripeSessionId String?
   // Who holds it, to cap how many slots one visitor can tie up.
   ip              String?
+  // Random per-browser secret (HttpOnly cookie) proving a later request
+  // comes from the same browser that started this checkout.
+  owner           String?
 
   @@map("slot_holds")
 }

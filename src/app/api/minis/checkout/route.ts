@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { CHECKOUT_BRANDING, getStripe, isStripeConfigured } from "@/lib/stripe";
 import { isDbConfigured } from "@/lib/db";
@@ -16,6 +17,9 @@ import { trustedOrigin, visitorKey } from "@/lib/site";
 export const runtime = "nodejs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Private per-browser token that marks which holds this browser owns. */
+const OWNER_COOKIE = "hbp_mini_owner";
 
 interface MiniCheckoutBody {
   time: string;
@@ -71,7 +75,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Please choose how you'd like to pay." }, { status: 400 });
   }
 
-  const hold = await holdMiniSlot(time, visitorKey(req), email, now);
+  const owner = req.cookies.get(OWNER_COOKIE)?.value || randomBytes(18).toString("base64url");
+  const hold = await holdMiniSlot(time, visitorKey(req), owner, now);
   if (!hold.ok && hold.reason === "limit") {
     return NextResponse.json(
       { error: "You already have times held in checkout. Finish or cancel those first, then try again." },
@@ -155,7 +160,15 @@ export async function POST(req: NextRequest) {
       cancel_url: `${origin}/christmas-minis?canceled=1&hold=${releaseKey}`,
     });
     await attachCheckoutToHold(releaseKey, session.id);
-    return NextResponse.json({ url: session.url });
+    const res = NextResponse.json({ url: session.url });
+    res.cookies.set(OWNER_COOKIE, owner, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+    return res;
   } catch (err) {
     console.error("Christmas mini checkout error:", err);
     await dropHold(releaseKey);
