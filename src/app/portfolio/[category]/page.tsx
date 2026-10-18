@@ -18,7 +18,9 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: Params): Metadata {
   const g = galleryBySlug(params.category);
   if (!g) return {};
-  const card = `/og/portfolio-${g.slug}.jpg`;
+  // ?v= changes whenever a card's image does, so apps that cache previews by
+  // URL (Facebook especially) fetch the new one.
+  const card = `/og/portfolio-${g.slug}.jpg?v=2`;
   return {
     title: `${g.title} | Hailey Brooke Photography`,
     description: `${g.note}. ${g.description}`,

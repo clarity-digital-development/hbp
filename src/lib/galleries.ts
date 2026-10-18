@@ -13,7 +13,7 @@ export type Gallery = {
 // Landscape frames span the full grid width; everything else is 2:3 and pairs
 // up. Measured from the sources rather than assumed.
 const LANDSCAPE = new Set([
-  "taylor-03", "taylor-05", "wedding-04", "wedding-06",
+  "taylor-03", "taylor-05", "wedding-04", "wedding-06", "wedding-11",
   "couples-02", "couples-10", "couples-19", "branding-02",
 ]);
 
@@ -52,14 +52,22 @@ const BRANDING = [
   "branding-06","branding-07","branding-08","branding-09","branding-10",
 ];
 
-// The Taylors first, then Joshua & Courtni. taylor-14 is omitted — it is a
-// second frame of the same moment as taylor-13.
+// Newest work leads: Hailey's chosen cover opens the gallery, then the
+// golf-course wedding and a second couple's details, paired by subject. That's
+// ten cells, an even count, so the wide frames below keep their parity. Then
+// the Taylors, then Joshua & Courtni. taylor-14 is omitted — it is a second
+// frame of the same moment as taylor-13. The cake topper (wedding-20) closes
+// the gallery and completes the last row.
 const WEDDINGS = [
+  "wedding-11",
+  "wedding-12","wedding-13","wedding-14","wedding-15",
+  "wedding-16","wedding-18","wedding-17","wedding-19",
   "taylor-01","taylor-02","taylor-03","taylor-04","taylor-06","taylor-07",
   "taylor-08","taylor-05","taylor-09","taylor-10","taylor-11","taylor-12",
   "taylor-13","taylor-15","taylor-16","taylor-17","taylor-18",
   "wedding-01","wedding-02","wedding-03","wedding-04","wedding-05",
   "wedding-07","wedding-06","wedding-08","wedding-09","wedding-10",
+  "wedding-20",
 ];
 
 // A `col-span-2` tile can only begin in column one, and CSS grid's default
@@ -106,7 +114,8 @@ export const galleries: Gallery[] = [
     title: "Weddings",
     note: "From first looks to last dances",
     description: "Kentucky wedding photography by Hailey Brooke, from first looks to last dances.",
-    cover: "/images/portfolio/wedding-06.jpg",
+    // Hailey's pick for the Weddings cover.
+    cover: "/images/portfolio/wedding-11.jpg",
     slides: WEDDINGS.map(slide),
   },
 ];

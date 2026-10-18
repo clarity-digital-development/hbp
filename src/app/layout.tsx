@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: [
       {
-        url: "/og/default.jpg",
+        url: "/og/default.jpg?v=2",
         width: 1200,
         height: 630,
         alt: "Hailey Brooke Photography — Kentucky wedding and portrait photographer",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
-    images: ["/og/default.jpg"],
+    images: ["/og/default.jpg?v=2"],
   },
 };
 
