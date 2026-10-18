@@ -107,6 +107,8 @@ model SlotHold {
   // Secret in the Checkout cancel URL; lets that client release the hold.
   releaseKey      String
   stripeSessionId String?
+  // Who holds it, to cap how many slots one visitor can tie up.
+  ip              String?
 
   @@map("slot_holds")
 }

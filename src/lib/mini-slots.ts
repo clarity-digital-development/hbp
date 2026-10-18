@@ -11,6 +11,15 @@ import { CHRISTMAS_MINIS } from "@/lib/minis";
  */
 export const HOLD_MINUTES = 35;
 
+/**
+ * Live holds one visitor (by IP) may have at once. Without a cap, one person
+ * could keep all six slots tied up by starting checkout over and over. Two
+ * still lets a family book two times, or two people share a connection.
+ */
+export const HOLDS_PER_VISITOR = 2;
+
+export type HoldResult = { ok: true; releaseKey: string } | { ok: false; reason: "taken" | "limit" };
+
 const keyFor = (time: string) => `christmas-minis:${CHRISTMAS_MINIS.date}:${time}`;
 
 /** Paid bookings and live holds: the times nobody else can book. */
@@ -33,13 +42,13 @@ export async function takenMiniTimes(now = new Date()): Promise<Set<string>> {
 }
 
 /**
- * Reserves a slot for one checkout. Returns the hold's release key, or null
- * when the slot is booked or someone else is already paying for it.
+ * Reserves a slot for one checkout: "taken" when it is booked or someone else
+ * is paying for it, "limit" when this visitor already holds too many.
  *
  * No transaction needed: the slot is the hold's primary key, so of two
  * people racing for the same free slot, exactly one insert succeeds.
  */
-export async function holdMiniSlot(time: string, now = new Date()): Promise<string | null> {
+export async function holdMiniSlot(time: string, now = new Date(), ip: string | null = null): Promise<HoldResult> {
   const booked = await prisma.booking.count({
     where: {
       packageName: CHRISTMAS_MINIS.packageName,
@@ -48,19 +57,25 @@ export async function holdMiniSlot(time: string, now = new Date()): Promise<stri
       status: { not: "cancelled" },
     },
   });
-  if (booked > 0) return null;
+  if (booked > 0) return { ok: false, reason: "taken" };
 
   const slotKey = keyFor(time);
+  if (ip) {
+    const live = await prisma.slotHold.count({
+      where: { ip, expiresAt: { gt: now }, slotKey: { not: slotKey } },
+    });
+    if (live >= HOLDS_PER_VISITOR) return { ok: false, reason: "limit" };
+  }
   await prisma.slotHold.deleteMany({ where: { slotKey, expiresAt: { lte: now } } });
 
   const releaseKey = randomBytes(18).toString("base64url");
   try {
     await prisma.slotHold.create({
-      data: { slotKey, releaseKey, expiresAt: new Date(now.getTime() + HOLD_MINUTES * 60_000) },
+      data: { slotKey, releaseKey, ip, expiresAt: new Date(now.getTime() + HOLD_MINUTES * 60_000) },
     });
-    return releaseKey;
+    return { ok: true, releaseKey };
   } catch (err) {
-    if ((err as { code?: string })?.code === "P2002") return null; // someone else is in checkout
+    if ((err as { code?: string })?.code === "P2002") return { ok: false, reason: "taken" }; // someone else is in checkout
     throw err;
   }
 }

@@ -11,6 +11,7 @@ import {
 } from "@/lib/minis";
 import { attachCheckoutToHold, dropHold, holdMiniSlot } from "@/lib/mini-slots";
 import { formatSessionDate } from "@/lib/payments";
+import { clientIp, trustedOrigin } from "@/lib/site";
 
 export const runtime = "nodejs";
 
@@ -70,13 +71,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Please choose how you'd like to pay." }, { status: 400 });
   }
 
-  const releaseKey = await holdMiniSlot(time, now);
-  if (!releaseKey) {
+  const hold = await holdMiniSlot(time, now, clientIp(req));
+  if (!hold.ok && hold.reason === "limit") {
+    return NextResponse.json(
+      { error: "You already have times held in checkout. Finish or cancel those first, then try again." },
+      { status: 429 }
+    );
+  }
+  if (!hold.ok) {
     return NextResponse.json(
       { error: `Sorry, ${time} was just taken. Please choose another time.`, taken: true },
       { status: 409 }
     );
   }
+  const { releaseKey } = hold;
 
   const { total, dueNow, balance } = miniTotals(payInFull, addOns);
   const when = `${formatSessionDate(MINI.date)} at ${time}`;
@@ -110,7 +118,7 @@ export async function POST(req: NextRequest) {
       })),
   ];
 
-  const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const origin = trustedOrigin(req);
 
   try {
     const session = await getStripe().checkout.sessions.create({

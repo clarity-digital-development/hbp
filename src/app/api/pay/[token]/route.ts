@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { CHECKOUT_BRANDING, getStripe, isStripeConfigured } from "@/lib/stripe";
 import { prisma, isDbConfigured } from "@/lib/db";
 import { amountDueCents, formatSessionDate, validateTip } from "@/lib/payments";
+import { trustedOrigin } from "@/lib/site";
 
 export const runtime = "nodejs";
 
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
   const tip = validateTip(booking, body.tipCents ?? 0);
   if (!tip.ok) return NextResponse.json({ error: tip.error }, { status: 400 });
 
-  const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const origin = trustedOrigin(req);
   const isSession = booking.kind === "session";
 
   const lineItems = [

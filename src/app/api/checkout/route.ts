@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CHECKOUT_BRANDING, getStripe, isStripeConfigured } from "@/lib/stripe";
 import { computeTotals, printsSummary, type Quantities } from "@/lib/pricing";
+import { trustedOrigin } from "@/lib/site";
 
 export const runtime = "nodejs";
 
@@ -43,10 +44,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not determine a deposit amount." }, { status: 400 });
   }
 
-  const origin =
-    req.headers.get("origin") ||
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    "http://localhost:3005";
+  const origin = trustedOrigin(req);
 
   try {
     const stripe = getStripe();
