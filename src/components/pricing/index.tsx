@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Tier } from "@/lib/packages";
+import { ChevronDown } from "lucide-react";
+import type { AddOn, Tier } from "@/lib/packages";
 
 /**
  * Shared pieces for the two pricing pages. These pages deliberately run a
@@ -58,6 +59,14 @@ export function TierRow({ tier }: { tier: Tier }) {
       <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-4 mb-2.5">
         <h3 className="font-flourish text-[2.1rem] leading-tight text-charcoal">{tier.name}</h3>
         <p className="sm:text-right whitespace-nowrap">
+          {tier.badge && (
+            <span
+              className="block text-[0.68rem] uppercase text-gold-dark mb-0.5"
+              style={{ letterSpacing: "0.24em" }}
+            >
+              {tier.badge}
+            </span>
+          )}
           {tier.from && (
             <span className="block font-reading italic text-[0.78rem] text-medium-gray -mb-0.5">
               starting at
@@ -70,7 +79,49 @@ export function TierRow({ tier }: { tier: Tier }) {
       <p className="font-reading text-[1.06rem] leading-relaxed text-medium-gray max-w-[58ch]">
         {tier.description}
       </p>
+      {tier.note && (
+        <p className="font-reading italic text-[0.97rem] text-olive-dark mt-3 max-w-[58ch]">
+          {tier.note}
+        </p>
+      )}
     </div>
+  );
+}
+
+/**
+ * Priced extras, on the same rule-separated rhythm as the tier rows. Items
+ * with `more` get a native details toggle, so this stays a server component.
+ */
+export function AddOnList({ items }: { items: AddOn[] }) {
+  return (
+    <ul>
+      {items.map((a) => (
+        <li key={a.name} className="py-4 border-t border-beige last:border-b">
+          <div className="flex items-baseline justify-between gap-6">
+            <p className="font-reading text-[1.06rem] text-charcoal min-w-0">{a.name}</p>
+            <p className="font-medium text-base text-olive-dark whitespace-nowrap">{a.price}</p>
+          </div>
+          {a.detail && (
+            <p className="font-reading italic text-[0.95rem] text-medium-gray">{a.detail}</p>
+          )}
+          {a.more && (
+            <details className="group mt-1.5">
+              <summary
+                className="inline-flex items-center gap-1 cursor-pointer list-none [&::-webkit-details-marker]:hidden text-[0.7rem] uppercase text-olive hover:text-olive-dark focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-olive"
+                style={{ letterSpacing: "0.2em" }}
+              >
+                <span className="group-open:hidden">Learn more</span>
+                <span className="hidden group-open:inline">Show less</span>
+                <ChevronDown size={12} aria-hidden="true" className="transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="font-reading text-[1rem] leading-relaxed text-medium-gray max-w-[58ch] mt-2">
+                {a.more}
+              </p>
+            </details>
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import {
+  AddOnList,
   AddOnNote,
   Eyebrow,
   PricingFooter,
@@ -8,12 +9,12 @@ import {
   Sprig,
   TierRow,
 } from "@/components/pricing";
-import { addOnNote, weddingTiers } from "@/lib/packages";
+import { weddingAddOns, weddingTiers, weddingTravelNote } from "@/lib/packages";
 
 export const metadata: Metadata = {
   title: "Wedding Photography Pricing | Hailey Brooke Photography",
   description:
-    "Wedding and elopement photography across Kentucky. Coverage from intimate elopements to full ten-hour days, with a second shooter, album and Polaroids.",
+    "Wedding and elopement photography across Kentucky. Four collections from $795, with second photographers, heirloom albums and Polaroids.",
   alternates: { canonical: "/weddings" },
   openGraph: {
     images: [{ url: "/og/weddings.jpg", width: 1200, height: 630, alt: "Wedding photography by Hailey Brooke" }],
@@ -58,14 +59,21 @@ export default function WeddingsPage() {
           {weddingTiers.map((tier) => (
             <TierRow key={tier.name} tier={tier} />
           ))}
+        </section>
 
-          <AddOnNote>{addOnNote}</AddOnNote>
+        {/* Every extra has a published price, so nothing appears for the
+            first time on the final invoice. */}
+        <section id="add-ons" className="pt-16 scroll-mt-24">
+          <Sprig />
+          <SectionTitle>Add to any collection</SectionTitle>
+          <AddOnList items={weddingAddOns} />
+          <AddOnNote>{weddingTravelNote}</AddOnNote>
         </section>
 
         <PricingFooter
           href="/contact?service=Wedding"
           label="Inquire about your date"
-          note="Every package includes a signed contract and a retainer to hold your date."
+          note="Every collection includes a signed contract and a 30% retainer to hold your date."
         />
       </div>
     </div>
