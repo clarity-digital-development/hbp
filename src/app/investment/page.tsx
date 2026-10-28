@@ -8,7 +8,7 @@ import Link from "next/link";
 const packages = [
   {
     name: "Mini Session",
-    price: "$100",
+    price: "$125",
     duration: "30 minutes",
     description: "Quick, simple, and perfect for updated photos",
     features: [
@@ -20,7 +20,7 @@ const packages = [
   },
   {
     name: "Full Session",
-    price: "$175",
+    price: "$200",
     duration: "60 minutes",
     description: "My most popular package",
     features: [

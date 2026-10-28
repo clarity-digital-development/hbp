@@ -110,7 +110,7 @@ export const weddingTravelNote =
 export const sessionTiers: Tier[] = [
   {
     name: "Mini session",
-    price: "$100",
+    price: "$125",
     description:
       "This session runs up to 30 minutes at a location of your choosing, and you'll get all of the best photos back from the shoot. If the session is held in-studio, studio fees will be added to the final invoice.",
     image: "/images/session-mini.jpg",
@@ -118,7 +118,7 @@ export const sessionTiers: Tier[] = [
   },
   {
     name: "Full session",
-    price: "$175",
+    price: "$200",
     description:
       "This session runs up to 1 hour at a location of your choosing, and includes one outfit change. You'll get all of the best photos back from the shoot. If the session is held in-studio, studio fees will be added to the final invoice.",
     image: "/images/session-full.jpg",
