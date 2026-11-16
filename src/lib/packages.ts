@@ -53,7 +53,7 @@ export const weddingTiers: Tier[] = [
     price: "$2,950",
     badge: "Best value",
     description:
-      "Up to 10 hours of coverage with a second photographer for up to 8 hours. Includes an engagement session, a 10x10 heirloom album, Polaroids taken throughout the day, content for social media, sneak peeks within 24 hours, and priority delivery of your full gallery within 4 weeks.",
+      "Up to 10 hours of coverage with a second photographer for up to 8 hours. Includes an engagement session, a 10x10 heirloom album, Polaroids taken throughout the day, content for social media, sneak peeks within 24 hours, and priority delivery of your full gallery within 8 weeks.",
     note: "Booked separately, everything Heirloom adds to Signature would come to $2,210. Here it's $755.",
   },
 ];
@@ -88,7 +88,7 @@ export const weddingAddOns: AddOn[] = [
   {
     name: "Priority gallery delivery",
     price: "$250",
-    detail: "Your full gallery within 4 weeks. Included in Heirloom",
+    detail: "Your full gallery within 8 weeks. Included in Heirloom",
   },
   {
     name: "Rehearsal or day-after session",
